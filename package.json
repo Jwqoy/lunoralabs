@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:bazi": "node --test scripts/verify-bazi.mjs"
+    "test:bazi": "node --test tests/verify-bazi.mjs"
   },
   "dependencies": {
     "lunar-javascript": "^1.7.8",

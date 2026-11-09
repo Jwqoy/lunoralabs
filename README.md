@@ -23,7 +23,7 @@ npm run dev
 校验排盘金标用例：
 
 ```bash
-npm run test:bazi
+npm run test:bazi   # tests/verify-bazi.mjs
 ```
 
 ## 排盘口径（Demo1）
