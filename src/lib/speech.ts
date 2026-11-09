@@ -2,7 +2,10 @@ import { CHARACTER } from "@/lib/brand";
 import { PAINTING_STARTER } from "@/lib/painting";
 import type { VoiceGender } from "@/types";
 
-export const WELCOME_LINE = `你好，我是${CHARACTER}。${PAINTING_STARTER}`;
+/** 试听用缩短版；完整开场白见 PAINTING_STARTER / greetingMessage */
+export const WELCOME_LINE = `你好，我是${CHARACTER}。每个人的八字，都可以画成一幅属于自己的画。我们一起看看，你关心的事会怎样改变这幅画，以及新风景是否是你想要的生活。`;
+
+export { PAINTING_STARTER };
 
 function pickVoice(gender: VoiceGender): SpeechSynthesisVoice | null {
   if (typeof window === "undefined" || !window.speechSynthesis) return null;

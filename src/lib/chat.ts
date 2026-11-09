@@ -3,6 +3,8 @@ import { CHARACTER } from "@/lib/brand";
 import { chartLines, formatPillar } from "@/lib/bazi";
 import { INTERPRETATION_BOUNDARIES, LAYER_NOTE } from "@/lib/knowledge";
 import {
+  PAINTING_BOUNDARY,
+  PAINTING_CORE,
   PAINTING_LENS,
   PAINTING_STARTER,
   analysisFromPainting,
@@ -32,9 +34,12 @@ export function greetingMessage(chart: BaziChart): ChatMessage {
     [
       PAINTING_STARTER,
       "",
-      `盘已确认：年${formatPillar(chart.year)} · 月${formatPillar(chart.month)} · 日${formatPillar(chart.day)} · 时${formatPillar(chart.hour)}。我是${CHARACTER}。`,
+      PAINTING_CORE,
       PAINTING_LENS,
-      "聊天模式：短预测，直接说这事对你的画是助益、损耗还是改画。分析模式：展开天干地支排盘图、五行与关系工具，再落到预测。",
+      "",
+      `盘已确认：年${formatPillar(chart.year)} · 月${formatPillar(chart.month)} · 日${formatPillar(chart.day)} · 时${formatPillar(chart.hour)}。我是${CHARACTER}。`,
+      "聊天模式给短预测；分析模式按「原局画面 → 入画元素 → 变化 → 愿望 → 行动」展开，并附排盘图工具。",
+      PAINTING_BOUNDARY,
     ].join("\n"),
     "moon",
     { mode: "chat" },
@@ -101,7 +106,7 @@ export function answerQuestion(
   const text =
     mode === "chat"
       ? `${chatFromPainting(read, chart)}${
-          DEMO ? "\n\n【演示】聊天模式 · 以画观盘 · 短预测" : ""
+          DEMO ? "\n\n【演示】聊天模式 · 变化与愿望分开" : ""
         }`
       : analysisWriteup(prompt, chart, memory);
 
@@ -119,4 +124,4 @@ export function userMessage(text: string, mode: ReplyMode): ChatMessage {
   return stamp(text, "user", { mode });
 }
 
-export const PROACTIVE_BANNER = `今日有一点「宜收敛、少争锋」的信号——像给画面留白。点开${CHARACTER}，可用你选的声音播报问候。`;
+export const PROACTIVE_BANNER = `今日天气偏「宜留白、少争锋」——像给画面一点呼吸。点开${CHARACTER}，可用你选的声音播报问候。`;

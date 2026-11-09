@@ -165,7 +165,7 @@ export function DemoApp() {
                 </span>
               </p>
               <p className="mt-5 max-w-md text-[0.95rem] leading-7 text-[var(--fg-muted)] rise rise-delay-1">
-                每个人的八字都会画出一副属于你的画。先确认盘，再问事情会如何入画——助益、损耗，或改写成新画面。
+                八字是一幅不断与外界互动的画。先确认盘，再看事情带来什么变化——以及这是否是你想要的生活。
               </p>
               <div className="mt-9 flex flex-wrap gap-3 rise rise-delay-2">
                 <button

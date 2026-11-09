@@ -7,4 +7,4 @@ export const CHARACTER = CHARACTER_ZH;
 
 /** Product thesis (详见 painting.ts + knowledge bank) */
 export const THESIS_ZH =
-  "每个人的八字都会画出一副属于你的画；变数像元素入画，改变画面。";
+  "八字是一幅不断与外界互动的画：先看变化，再问这是不是你想要的生活。";
