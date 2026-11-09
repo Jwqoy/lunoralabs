@@ -1,16 +1,19 @@
 "use client";
 
+import { useId } from "react";
+
 type Props = {
   size?: number;
   className?: string;
   glowing?: boolean;
-  /** When true: speak-pulse, soft bob, eyes focus */
   speaking?: boolean;
-  /** idle | listen | speak moods */
   mood?: "idle" | "listen" | "speak";
 };
 
-/** Soft journaling crescent with livelier motion — still brand-safe (sage/cream). */
+/**
+ * Siri-style round AI carrier for 小弦 — soft orb, not crescent.
+ * Palette stays Lunora journaling (cream / sage / warm ink), no neon purple.
+ */
 export function MoonPet({
   size = 64,
   className = "",
@@ -19,76 +22,84 @@ export function MoonPet({
   mood,
 }: Props) {
   const mode = mood ?? (speaking ? "speak" : "idle");
+  const uid = useId().replace(/:/g, "");
 
   return (
     <div
-      className={`moon-stage relative inline-flex items-center justify-center ${className}`}
+      className={`orb-stage relative inline-flex items-center justify-center ${className}`}
       style={{ width: size, height: size }}
       data-mood={mode}
       aria-hidden
     >
-      {(glowing || mode === "speak") && (
-        <span className="moon-halo absolute inset-[-12%] rounded-full" />
-      )}
-      <svg
-        className="moon-body relative"
-        width={size}
-        height={size}
-        viewBox="0 0 80 80"
-        fill="none"
-      >
-        {/* crescent body */}
-        <path
-          className="moon-crescent"
-          d="M48 12c14 4 24 18 22 34-2 16-16 28-32 28-8 0-15-2-21-7 12 2 25-2 32-12 8-12 6-28-1-43z"
-          fill="#F8F7F3"
-          stroke="#7E8D7C"
-          strokeWidth="1.4"
-          strokeLinejoin="round"
-        />
-        {/* soft ridges */}
-        <path
-          d="M50 18c10 5 16 16 15 27"
-          stroke="#7E8D7C"
-          strokeWidth="1"
-          strokeLinecap="round"
-          opacity="0.45"
-        />
-        <path
-          d="M44 22c7 4 12 12 11 20"
-          stroke="#A8B5A6"
-          strokeWidth="0.9"
-          strokeLinecap="round"
-          opacity="0.65"
-        />
-        {/* face — slight offset toward lit side */}
-        <g className="moon-face" transform="translate(46 34)">
-          <ellipse className="moon-eye moon-eye-l" cx="-5.2" cy="-1" rx="1.55" ry="1.9" fill="#5C655F" />
-          <ellipse className="moon-eye moon-eye-r" cx="3.4" cy="-1.2" rx="1.55" ry="1.9" fill="#5C655F" />
-          <path
-            className="moon-blush moon-blush-l"
-            d="M-8.2 2.2a2.2 1.2 0 1 0 0.1 0"
-            fill="#C9B8A8"
-            opacity="0.35"
-          />
-          <path
-            className="moon-blush moon-blush-r"
-            d="M6.2 2a2.2 1.2 0 1 0 0.1 0"
-            fill="#C9B8A8"
-            opacity="0.35"
-          />
-          <path
-            className="moon-mouth"
-            d="M-2.2 4.6c1.2 1.6 3.4 1.6 4.6 0"
+      <span className={`orb-aura absolute inset-[-18%] rounded-full ${glowing || mode === "speak" ? "is-on" : ""}`} />
+      <div className="orb-shell relative h-full w-full overflow-hidden rounded-full">
+        <svg className="orb-body absolute inset-0 h-full w-full" viewBox="0 0 100 100" fill="none">
+          <defs>
+            <radialGradient id={`${uid}-core`} cx="38%" cy="32%" r="68%">
+              <stop offset="0%" stopColor="#FFFEFA" />
+              <stop offset="42%" stopColor="#E8EEE4" />
+              <stop offset="78%" stopColor="#C5D0C2" />
+              <stop offset="100%" stopColor="#8A9A88" />
+            </radialGradient>
+            <linearGradient id={`${uid}-ribbon-a`} x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#F8F7F3" stopOpacity="0.95" />
+              <stop offset="50%" stopColor="#A8B5A6" stopOpacity="0.75" />
+              <stop offset="100%" stopColor="#7E8D7C" stopOpacity="0.35" />
+            </linearGradient>
+            <linearGradient id={`${uid}-ribbon-b`} x1="1" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#D8C7B4" stopOpacity="0.55" />
+              <stop offset="100%" stopColor="#E5E9E1" stopOpacity="0.15" />
+            </linearGradient>
+            <filter id={`${uid}-soft`} x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="1.2" />
+            </filter>
+            <clipPath id={`${uid}-clip`}>
+              <circle cx="50" cy="50" r="48" />
+            </clipPath>
+          </defs>
+
+          <circle cx="50" cy="50" r="48" fill={`url(#${uid}-core)`} />
+
+          <g clipPath={`url(#${uid}-clip)`}>
+            <g className="orb-swirl orb-swirl-a" filter={`url(#${uid}-soft)`}>
+              <path
+                d="M8 62 C 22 28, 48 18, 72 34 C 90 48, 88 78, 58 86 C 34 92, 12 80, 8 62 Z"
+                fill={`url(#${uid}-ribbon-a)`}
+                opacity="0.85"
+              />
+            </g>
+            <g className="orb-swirl orb-swirl-b" filter={`url(#${uid}-soft)`}>
+              <path
+                d="M78 22 C 96 40, 92 70, 68 82 C 44 94, 18 78, 24 52 C 30 28, 56 10, 78 22 Z"
+                fill={`url(#${uid}-ribbon-b)`}
+                opacity="0.7"
+              />
+            </g>
+            <g className="orb-swirl orb-swirl-c">
+              <ellipse cx="34" cy="30" rx="16" ry="10" fill="#FFFEFA" opacity="0.55" />
+            </g>
+          </g>
+
+          {/* glass rim + specular */}
+          <circle
+            cx="50"
+            cy="50"
+            r="47.2"
             stroke="#7E8D7C"
-            strokeWidth="1.15"
-            strokeLinecap="round"
+            strokeOpacity="0.28"
+            strokeWidth="1.2"
             fill="none"
           />
-        </g>
-        {/* highlight fleck */}
-        <circle className="moon-fleck" cx="54" cy="26" r="1.4" fill="#E5E9E1" opacity="0.9" />
-      </svg>
+          <path
+            d="M28 22 C 36 14, 52 12, 62 18"
+            stroke="#FFFEFA"
+            strokeWidth="2.4"
+            strokeLinecap="round"
+            opacity="0.75"
+          />
+          <circle className="orb-core-dot" cx="50" cy="50" r="3.2" fill="#5C655F" opacity="0.35" />
+        </svg>
+      </div>
     </div>
   );
 }

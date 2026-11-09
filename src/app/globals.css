@@ -85,112 +85,147 @@ body {
   }
 }
 
-@keyframes moon-idle {
+/* Siri-like round AI orb (小弦 carrier) */
+@keyframes orb-breathe {
   0%,
   100% {
-    transform: translateY(0) rotate(-2deg) scale(1);
-  }
-  35% {
-    transform: translateY(-5px) rotate(2.5deg) scale(1.02);
-  }
-  70% {
-    transform: translateY(-2px) rotate(-1deg) scale(0.99);
-  }
-}
-
-@keyframes moon-speak {
-  0%,
-  100% {
-    transform: translateY(0) rotate(-1deg) scale(1);
-  }
-  25% {
-    transform: translateY(-6px) rotate(3deg) scale(1.045);
+    transform: scale(1);
   }
   50% {
-    transform: translateY(-1px) rotate(-2deg) scale(1.01);
-  }
-  75% {
-    transform: translateY(-5px) rotate(2deg) scale(1.035);
+    transform: scale(1.035);
   }
 }
 
-@keyframes moon-blink {
-  0%,
-  42%,
-  48%,
-  100% {
-    transform: scaleY(1);
-  }
-  45% {
-    transform: scaleY(0.12);
-  }
-}
-
-@keyframes moon-mouth-talk {
+@keyframes orb-speak-scale {
   0%,
   100% {
-    transform: translateY(0) scaleX(1);
+    transform: scale(1);
   }
-  50% {
-    transform: translateY(1.2px) scaleX(1.18);
-  }
-}
-
-@keyframes moon-halo-pulse {
-  0%,
-  100% {
-    opacity: 0.22;
-    transform: scale(0.92);
-  }
-  50% {
-    opacity: 0.48;
+  30% {
     transform: scale(1.06);
   }
+  60% {
+    transform: scale(0.98);
+  }
 }
 
-@keyframes moon-fleck {
-  0%,
-  100% {
-    opacity: 0.55;
+@keyframes orb-swirl-a {
+  0% {
+    transform: rotate(0deg) translate(0, 0);
   }
   50% {
-    opacity: 1;
+    transform: rotate(18deg) translate(2px, -3px);
+  }
+  100% {
+    transform: rotate(360deg) translate(0, 0);
   }
 }
 
-.moon-stage .moon-body {
-  transform-origin: 50% 55%;
-  animation: moon-idle 4.8s ease-in-out infinite;
+@keyframes orb-swirl-b {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(-22deg) scale(1.08);
+  }
+  100% {
+    transform: rotate(-360deg) scale(1);
+  }
+}
+
+@keyframes orb-swirl-c {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(4px, 3px) scale(1.12);
+    opacity: 0.85;
+  }
+}
+
+@keyframes orb-aura {
+  0%,
+  100% {
+    opacity: 0.28;
+    transform: scale(0.94);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes orb-core-pulse {
+  0%,
+  100% {
+    opacity: 0.28;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(1.35);
+  }
+}
+
+.orb-stage .orb-shell {
+  box-shadow:
+    inset 0 1px 2px rgba(255, 254, 250, 0.85),
+    inset 0 -8px 18px rgba(126, 141, 124, 0.18),
+    0 10px 28px rgba(37, 43, 40, 0.08);
+  animation: orb-breathe 4.6s ease-in-out infinite;
   will-change: transform;
+  background: #e8eee4;
 }
 
-.moon-stage[data-mood="speak"] .moon-body,
-.moon-stage[data-mood="listen"] .moon-body {
-  animation: moon-speak 1.35s ease-in-out infinite;
+.orb-stage[data-mood="speak"] .orb-shell,
+.orb-stage[data-mood="listen"] .orb-shell {
+  animation: orb-speak-scale 0.9s ease-in-out infinite;
 }
 
-.moon-stage .moon-eye {
-  transform-origin: center;
-  animation: moon-blink 5.2s ease-in-out infinite;
+.orb-swirl {
+  transform-origin: 50px 50px;
 }
 
-.moon-stage .moon-eye-r {
-  animation-delay: 0.12s;
+.orb-swirl-a {
+  animation: orb-swirl-a 14s linear infinite;
 }
 
-.moon-stage[data-mood="speak"] .moon-mouth {
-  transform-origin: 0px 5px;
-  animation: moon-mouth-talk 0.34s ease-in-out infinite;
+.orb-swirl-b {
+  animation: orb-swirl-b 18s linear infinite;
 }
 
-.moon-halo {
-  background: radial-gradient(circle, rgba(126, 141, 124, 0.35) 0%, rgba(126, 141, 124, 0) 70%);
-  animation: moon-halo-pulse 1.6s ease-in-out infinite;
+.orb-swirl-c {
+  animation: orb-swirl-c 5.5s ease-in-out infinite;
+}
+
+.orb-stage[data-mood="speak"] .orb-swirl-a {
+  animation-duration: 4.5s;
+}
+
+.orb-stage[data-mood="speak"] .orb-swirl-b {
+  animation-duration: 5.5s;
+}
+
+.orb-stage[data-mood="speak"] .orb-swirl-c {
+  animation-duration: 1.4s;
+}
+
+.orb-aura {
+  background: radial-gradient(circle, rgba(126, 141, 124, 0.32) 0%, rgba(126, 141, 124, 0) 68%);
   pointer-events: none;
+  opacity: 0.18;
+  transition: opacity 0.3s ease;
 }
 
-.moon-fleck {
-  animation: moon-fleck 3.4s ease-in-out infinite;
+.orb-aura.is-on {
+  animation: orb-aura 1.5s ease-in-out infinite;
+}
+
+.orb-core-dot {
+  transform-origin: 50px 50px;
+  animation: orb-core-pulse 3.2s ease-in-out infinite;
 }
 
 .glow-ring {

@@ -191,7 +191,7 @@ export function DemoApp() {
             <div className="pointer-events-none relative mx-auto flex w-full max-w-md flex-1 items-center justify-center lg:max-w-none lg:justify-end">
               <div className="absolute inset-8 rounded-full border border-[var(--line)]" />
               <div className="absolute inset-16 rounded-full border border-[var(--line)] opacity-60" />
-              <MoonPet size={280} className="relative" speaking={speaking} />
+              <MoonPet size={260} className="relative" speaking={speaking} glowing />
             </div>
           </div>
         </section>
