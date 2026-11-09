@@ -46,8 +46,6 @@ export function DemoApp() {
 
   useEffect(() => {
     const loaded = loadState();
-    // Prefer mint accent for fintech default if fresh
-    // v2 store defaults to fintech mint; no migration needed
     setState(loaded);
     if (loaded.birth) setBirthDraft(loaded.birth);
     warmVoices();
@@ -421,13 +419,22 @@ export function DemoApp() {
                 <span className="ml-2 text-base text-[var(--fg-dim)]">{PRODUCT}</span>
               </h2>
             </div>
-            <button
-              type="button"
-              className="btn-ghost rounded-[var(--radius-sm)] px-3 py-2 text-xs"
-              onClick={() => setSettingsOpen(true)}
-            >
-              设置
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                className="chip chip-active !text-[11px]"
+                title="Web 先用熟，再装 App（即将推出）"
+              >
+                Download App · 即将推出
+              </button>
+              <button
+                type="button"
+                className="btn-ghost rounded-[var(--radius-sm)] px-3 py-2 text-xs"
+                onClick={() => setSettingsOpen(true)}
+              >
+                设置
+              </button>
+            </div>
           </header>
 
           <div className="mb-3 grid grid-cols-2 gap-1 rounded-[var(--radius)] border border-[var(--line)] bg-[var(--bg-elevated)] p-1">
@@ -637,9 +644,9 @@ export function DemoApp() {
                 <div className="grid grid-cols-3 gap-2">
                   {(
                     [
-                      ["honey", "Mint"],
-                      ["silver", "Ice"],
-                      ["jade", "Cyan"],
+                      ["honey", "Sage"],
+                      ["silver", "Ink"],
+                      ["jade", "Mist"],
                     ] as [MoonTint, string][]
                   ).map(([value, label]) => (
                     <button
