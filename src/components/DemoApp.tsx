@@ -189,9 +189,7 @@ export function DemoApp() {
             </div>
 
             <div className="pointer-events-none relative mx-auto flex w-full max-w-md flex-1 items-center justify-center lg:max-w-none lg:justify-end">
-              <div className="absolute inset-8 rounded-full border border-[var(--line)]" />
-              <div className="absolute inset-16 rounded-full border border-[var(--line)] opacity-60" />
-              <MoonPet size={260} className="relative" speaking={speaking} glowing />
+              <MoonPet size={240} className="relative" speaking={speaking} glowing />
             </div>
           </div>
         </section>
@@ -643,7 +641,7 @@ export function DemoApp() {
             ) : null}
             <button
               type="button"
-              aria-label={`打开${CHARACTER}挂件`}
+              aria-label={`打开${CHARACTER}`}
               className="rounded-full focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
               onClick={() => setWidgetOpen((v) => !v)}
             >

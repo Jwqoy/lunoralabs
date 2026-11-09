@@ -11,8 +11,8 @@ type Props = {
 };
 
 /**
- * Siri-style round AI carrier for 小弦 — soft orb, not crescent.
- * Palette stays Lunora journaling (cream / sage / warm ink), no neon purple.
+ * Abstract round AI carrier (Siri-like vessel for 小弦 / Nox).
+ * Not a moon character — fluid waveform sphere.
  */
 export function MoonPet({
   size = 64,
@@ -31,75 +31,101 @@ export function MoonPet({
       data-mood={mode}
       aria-hidden
     >
-      <span className={`orb-aura absolute inset-[-18%] rounded-full ${glowing || mode === "speak" ? "is-on" : ""}`} />
+      <span className={`orb-ring orb-ring-1 ${glowing || mode !== "idle" ? "is-on" : ""}`} />
+      <span className={`orb-ring orb-ring-2 ${mode === "speak" ? "is-on" : ""}`} />
+      <span className={`orb-aura absolute inset-[-10%] rounded-full ${glowing || mode === "speak" ? "is-on" : ""}`} />
+
       <div className="orb-shell relative h-full w-full overflow-hidden rounded-full">
-        <svg className="orb-body absolute inset-0 h-full w-full" viewBox="0 0 100 100" fill="none">
+        <svg className="orb-body absolute inset-0 h-full w-full" viewBox="0 0 100 100">
           <defs>
-            <radialGradient id={`${uid}-core`} cx="38%" cy="32%" r="68%">
-              <stop offset="0%" stopColor="#FFFEFA" />
-              <stop offset="42%" stopColor="#E8EEE4" />
-              <stop offset="78%" stopColor="#C5D0C2" />
-              <stop offset="100%" stopColor="#8A9A88" />
+            <radialGradient id={`${uid}-glass`} cx="35%" cy="28%" r="75%">
+              <stop offset="0%" stopColor="#3A433E" />
+              <stop offset="45%" stopColor="#252B28" />
+              <stop offset="100%" stopColor="#151916" />
             </radialGradient>
-            <linearGradient id={`${uid}-ribbon-a`} x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#F8F7F3" stopOpacity="0.95" />
-              <stop offset="50%" stopColor="#A8B5A6" stopOpacity="0.75" />
-              <stop offset="100%" stopColor="#7E8D7C" stopOpacity="0.35" />
+            <linearGradient id={`${uid}-w1`} x1="0" y1="0.5" x2="1" y2="0.5">
+              <stop offset="0%" stopColor="#7E8D7C" stopOpacity="0" />
+              <stop offset="35%" stopColor="#C9D4C6" stopOpacity="0.95" />
+              <stop offset="65%" stopColor="#E8EEE4" stopOpacity="0.9" />
+              <stop offset="100%" stopColor="#A08A5C" stopOpacity="0" />
             </linearGradient>
-            <linearGradient id={`${uid}-ribbon-b`} x1="1" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#D8C7B4" stopOpacity="0.55" />
-              <stop offset="100%" stopColor="#E5E9E1" stopOpacity="0.15" />
+            <linearGradient id={`${uid}-w2`} x1="0" y1="0.5" x2="1" y2="0.5">
+              <stop offset="0%" stopColor="#A08A5C" stopOpacity="0" />
+              <stop offset="40%" stopColor="#D4C4A8" stopOpacity="0.75" />
+              <stop offset="100%" stopColor="#7E8D7C" stopOpacity="0" />
             </linearGradient>
-            <filter id={`${uid}-soft`} x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="1.2" />
+            <linearGradient id={`${uid}-w3`} x1="0" y1="0.5" x2="1" y2="0.5">
+              <stop offset="0%" stopColor="#5A6E7A" stopOpacity="0" />
+              <stop offset="50%" stopColor="#B7C4B4" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#5A6E7A" stopOpacity="0" />
+            </linearGradient>
+            <filter id={`${uid}-blur`} x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="1.6" />
             </filter>
             <clipPath id={`${uid}-clip`}>
-              <circle cx="50" cy="50" r="48" />
+              <circle cx="50" cy="50" r="47.5" />
             </clipPath>
           </defs>
 
-          <circle cx="50" cy="50" r="48" fill={`url(#${uid}-core)`} />
+          {/* dark glass sphere — reads as device/AI, not moon */}
+          <circle cx="50" cy="50" r="48" fill={`url(#${uid}-glass)`} />
 
-          <g clipPath={`url(#${uid}-clip)`}>
-            <g className="orb-swirl orb-swirl-a" filter={`url(#${uid}-soft)`}>
+          <g clipPath={`url(#${uid}-clip)`} filter={`url(#${uid}-blur)`}>
+            {/* Siri-like horizontal waveform ribbons */}
+            <g className="orb-wave orb-wave-1">
               <path
-                d="M8 62 C 22 28, 48 18, 72 34 C 90 48, 88 78, 58 86 C 34 92, 12 80, 8 62 Z"
-                fill={`url(#${uid}-ribbon-a)`}
-                opacity="0.85"
+                d="M4 50 C 18 34, 32 66, 46 50 S 74 34, 96 50"
+                stroke={`url(#${uid}-w1)`}
+                strokeWidth="5.5"
+                fill="none"
+                strokeLinecap="round"
               />
             </g>
-            <g className="orb-swirl orb-swirl-b" filter={`url(#${uid}-soft)`}>
+            <g className="orb-wave orb-wave-2">
               <path
-                d="M78 22 C 96 40, 92 70, 68 82 C 44 94, 18 78, 24 52 C 30 28, 56 10, 78 22 Z"
-                fill={`url(#${uid}-ribbon-b)`}
-                opacity="0.7"
+                d="M4 50 C 20 64, 34 36, 50 50 S 78 66, 96 50"
+                stroke={`url(#${uid}-w2)`}
+                strokeWidth="3.8"
+                fill="none"
+                strokeLinecap="round"
               />
             </g>
-            <g className="orb-swirl orb-swirl-c">
-              <ellipse cx="34" cy="30" rx="16" ry="10" fill="#FFFEFA" opacity="0.55" />
+            <g className="orb-wave orb-wave-3">
+              <path
+                d="M6 50 C 22 42, 38 58, 52 50 S 76 40, 94 50"
+                stroke={`url(#${uid}-w3)`}
+                strokeWidth="2.6"
+                fill="none"
+                strokeLinecap="round"
+              />
             </g>
+            {/* soft vertical energy veil */}
+            <ellipse className="orb-veil" cx="50" cy="50" rx="18" ry="36" fill="#E8EEE4" opacity="0.08" />
           </g>
 
-          {/* glass rim + specular */}
+          {/* glass edge + specular — product lens, not lunar crater */}
           <circle
             cx="50"
             cy="50"
-            r="47.2"
-            stroke="#7E8D7C"
-            strokeOpacity="0.28"
-            strokeWidth="1.2"
+            r="47.4"
             fill="none"
+            stroke="#E8EEE4"
+            strokeOpacity="0.18"
+            strokeWidth="1.1"
           />
           <path
-            d="M28 22 C 36 14, 52 12, 62 18"
+            d="M30 24 C 38 16, 54 15, 64 22"
             stroke="#FFFEFA"
-            strokeWidth="2.4"
+            strokeWidth="2.2"
             strokeLinecap="round"
-            opacity="0.75"
+            opacity="0.55"
+            fill="none"
           />
-          <circle className="orb-core-dot" cx="50" cy="50" r="3.2" fill="#5C655F" opacity="0.35" />
         </svg>
       </div>
     </div>
   );
 }
+
+/** Preferred name going forward */
+export const OrbCarrier = MoonPet;
