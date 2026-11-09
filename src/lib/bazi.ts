@@ -1,23 +1,8 @@
+import { Solar } from "lunar-javascript";
 import { CHARACTER } from "@/lib/brand";
 import type { BaziChart, BirthInput, Pillar } from "@/types";
 
-const STEMS = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"] as const;
-const BRANCHES = [
-  "子",
-  "丑",
-  "寅",
-  "卯",
-  "辰",
-  "巳",
-  "午",
-  "未",
-  "申",
-  "酉",
-  "戌",
-  "亥",
-] as const;
-
-const STEM_ELEMENT: Record<string, string> = {
+export const STEM_ELEMENT: Record<string, string> = {
   甲: "木",
   乙: "木",
   丙: "火",
@@ -30,92 +15,35 @@ const STEM_ELEMENT: Record<string, string> = {
   癸: "水",
 };
 
-const HOUR_BRANCH: { start: number; branch: (typeof BRANCHES)[number] }[] = [
-  { start: 23, branch: "子" },
-  { start: 1, branch: "丑" },
-  { start: 3, branch: "寅" },
-  { start: 5, branch: "卯" },
-  { start: 7, branch: "辰" },
-  { start: 9, branch: "巳" },
-  { start: 11, branch: "午" },
-  { start: 13, branch: "未" },
-  { start: 15, branch: "申" },
-  { start: 17, branch: "酉" },
-  { start: 19, branch: "戌" },
-  { start: 21, branch: "亥" },
-];
+export const BRANCH_ELEMENT: Record<string, string> = {
+  寅: "木",
+  卯: "木",
+  巳: "火",
+  午: "火",
+  辰: "土",
+  戌: "土",
+  丑: "土",
+  未: "土",
+  申: "金",
+  酉: "金",
+  亥: "水",
+  子: "水",
+};
 
-function mod(n: number, m: number) {
-  return ((n % m) + m) % m;
-}
+/** Muted journaling palette for 五行 */
+export const ELEMENT_COLOR: Record<string, string> = {
+  木: "#5F7F5A",
+  火: "#B56A5A",
+  土: "#A08A5C",
+  金: "#6E7378",
+  水: "#5A6E7A",
+};
 
-/** Gregorian → approximate Chinese sexagenary year index (Demo 用近似历法) */
-function yearPillar(year: number, month: number, day: number): Pillar {
-  // 立春前仍属上一年：演示以 2 月 4 日为界
-  let y = year;
-  if (month < 2 || (month === 2 && day < 4)) y -= 1;
-  const stem = STEMS[mod(y - 4, 10)];
-  const branch = BRANCHES[mod(y - 4, 12)];
-  return { stem, branch, label: "年柱" };
-}
-
-function monthPillar(year: number, month: number, day: number): Pillar {
-  // 简化节气月：以公历月近似，寅月起于立春附近
-  let solarMonth = month;
-  if (day < 6) solarMonth = month === 1 ? 12 : month - 1;
-  const branch = BRANCHES[mod(solarMonth + 1, 12)]; // 寅=2 月附近
-  const yearStemIdx = STEMS.indexOf(yearPillar(year, month, day).stem as (typeof STEMS)[number]);
-  // 五虎遁：甲己之年丙作首
-  const monthStemStart = [2, 4, 6, 8, 0][yearStemIdx % 5];
-  const monthIdx = mod(solarMonth - 2, 12);
-  const stem = STEMS[mod(monthStemStart + monthIdx, 10)];
-  return { stem, branch, label: "月柱" };
-}
-
-/** Day pillar from JDN offset vs known anchor 甲子日 */
-function dayPillar(year: number, month: number, day: number): Pillar {
-  const jdn = gregorianToJdn(year, month, day);
-  // Anchor: 2000-01-01 ≈ 戊午；用固定偏移演示
-  const offset = jdn - 2451545; // 2000-01-01 JDN
-  // 2000-01-01 = 戊午 → stem 4 (戊), branch 6 (午)
-  const stem = STEMS[mod(4 + offset, 10)];
-  const branch = BRANCHES[mod(6 + offset, 12)];
-  return { stem, branch, label: "日柱" };
-}
-
-function hourPillar(dayStem: string, hour: number, minute: number): Pillar {
-  const h = minute >= 0 ? hour : hour;
-  let branch: (typeof BRANCHES)[number] = "子";
-  if (h === 23 || h === 0) branch = "子";
-  else {
-    for (let i = HOUR_BRANCH.length - 1; i >= 0; i--) {
-      if (h >= HOUR_BRANCH[i].start) {
-        branch = HOUR_BRANCH[i].branch;
-        break;
-      }
-    }
+function splitGanZhi(gz: string, label: string): Pillar {
+  if (!gz || gz.length < 2) {
+    return { stem: "—", branch: "—", label };
   }
-  const dayStemIdx = STEMS.indexOf(dayStem as (typeof STEMS)[number]);
-  // 五鼠遁：甲己还加甲
-  const hourStemStart = [0, 2, 4, 6, 8][dayStemIdx % 5];
-  const branchIdx = BRANCHES.indexOf(branch);
-  const stem = STEMS[mod(hourStemStart + branchIdx, 10)];
-  return { stem, branch, label: "时柱" };
-}
-
-function gregorianToJdn(year: number, month: number, day: number) {
-  const a = Math.floor((14 - month) / 12);
-  const y = year + 4800 - a;
-  const m = month + 12 * a - 3;
-  return (
-    day +
-    Math.floor((153 * m + 2) / 5) +
-    365 * y +
-    Math.floor(y / 4) -
-    Math.floor(y / 100) +
-    Math.floor(y / 400) -
-    32045
-  );
+  return { stem: gz[0], branch: gz[1], label };
 }
 
 function summarize(dayMaster: string, element: string, gender: BirthInput["gender"]): string {
@@ -128,13 +56,21 @@ function summarize(dayMaster: string, element: string, gender: BirthInput["gende
   return `日主${dayMaster}（${element}）。${tone}。请逐柱核对干支是否与你惯用盘一致——确认后，${CHARACTER}才会把这盘当作专属记忆。`;
 }
 
+/**
+ * 四柱排盘：节气月 + 五虎/五鼠遁，经 lunar-javascript（与常见在线排盘同源口径）。
+ * 默认：公历、不启用真太阳时、日柱按库默认换日策略。
+ */
 export function computeChart(birth: BirthInput): BaziChart {
   const [y, m, d] = birth.date.split("-").map(Number);
-  const [hh, mm] = birth.time.split(":").map(Number);
-  const year = yearPillar(y, m, d);
-  const month = monthPillar(y, m, d);
-  const day = dayPillar(y, m, d);
-  const hour = hourPillar(day.stem, hh, mm || 0);
+  const [hh, mm] = (birth.time || "12:00").split(":").map(Number);
+
+  const solar = Solar.fromYmdHms(y, m, d, hh || 0, mm || 0, 0);
+  const eight = solar.getLunar().getEightChar();
+
+  const year = splitGanZhi(eight.getYear(), "年柱");
+  const month = splitGanZhi(eight.getMonth(), "月柱");
+  const day = splitGanZhi(eight.getDay(), "日柱");
+  const hour = splitGanZhi(eight.getTime(), "时柱");
   const dayMaster = day.stem;
   const element = STEM_ELEMENT[dayMaster] ?? "土";
 
@@ -161,4 +97,12 @@ export function chartLines(chart: BaziChart) {
     `日柱 ${formatPillar(chart.day)}（日主${chart.dayMaster}）`,
     `时柱 ${formatPillar(chart.hour)}`,
   ];
+}
+
+export function stemColor(stem: string) {
+  return ELEMENT_COLOR[STEM_ELEMENT[stem] ?? ""] ?? "#252B28";
+}
+
+export function branchColor(branch: string) {
+  return ELEMENT_COLOR[BRANCH_ELEMENT[branch] ?? ""] ?? "#252B28";
 }

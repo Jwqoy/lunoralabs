@@ -1,15 +1,10 @@
 "use client";
 
 import { buildAnalysis, type Element } from "@/lib/analysis";
+import { ELEMENT_COLOR } from "@/lib/bazi";
 import type { BaziChart } from "@/types";
 
-const EL_COLOR: Record<Element, string> = {
-  木: "#3dff9a",
-  火: "#ff7a6e",
-  土: "#e0b46a",
-  金: "#d7deea",
-  水: "#5ee7ff",
-};
+const EL_COLOR = ELEMENT_COLOR as Record<Element, string>;
 
 type Props = {
   chart: BaziChart;

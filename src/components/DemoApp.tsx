@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { BaziTools } from "@/components/BaziTools";
 import { MoonPet } from "@/components/MoonPet";
+import { PillarBoard } from "@/components/PillarBoard";
 import { CHARACTER, CHARACTER_EN, COMPANY, PRODUCT } from "@/lib/brand";
-import { computeChart, formatPillar } from "@/lib/bazi";
+import { computeChart } from "@/lib/bazi";
 import {
   SHORTCUTS,
   PROACTIVE_BANNER,
@@ -124,16 +125,6 @@ export function DemoApp() {
     });
   };
 
-  const pillars = useMemo(() => {
-    if (!state?.chart) return [];
-    const c = state.chart;
-    return [
-      { label: "年", p: c.year },
-      { label: "月", p: c.month },
-      { label: "日", p: c.day },
-      { label: "时", p: c.hour },
-    ];
-  }, [state?.chart]);
 
   if (!state) {
     return (
@@ -261,10 +252,10 @@ export function DemoApp() {
 
       {state.step === "birth" && (
         <section className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-6 py-12">
-          <p className="mono-label rise">Chart gate</p>
-          <h2 className="display-font mt-3 text-3xl rise">输入正确生辰</h2>
+          <p className="mono-label rise">传统排盘录入</p>
+          <h2 className="display-font mt-3 text-3xl rise">输入出生信息</h2>
           <p className="mt-3 text-sm leading-6 text-[var(--fg-muted)] rise rise-delay-1">
-            准确度是 {PRODUCT} 的护城河。尽量用当地出生时间；时辰不确定可先填整点。
+            公历日期 + 出生时辰 + 性别。排盘按二十四节气定月柱；请尽量使用当地钟表时间。
           </p>
           <form
             className="panel mt-8 space-y-4 rounded-[var(--radius)] p-5 rise rise-delay-2"
@@ -345,7 +336,7 @@ export function DemoApp() {
               Demo 使用近似历法；正式版将校准真太阳时与节气。
             </label>
             <button type="submit" className="btn-primary w-full rounded-[var(--radius)] py-3.5 text-sm">
-              排盘并核对
+              排出四柱并核对
             </button>
           </form>
         </section>
@@ -353,25 +344,13 @@ export function DemoApp() {
 
       {state.step === "chart" && state.chart && (
         <section className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-6 py-12">
-          <p className="mono-label rise">Confirm</p>
-          <h2 className="display-font mt-3 text-3xl rise">确认四柱</h2>
+          <p className="mono-label rise">确认八字</p>
+          <h2 className="display-font mt-3 text-3xl rise">请确认这盘正确</h2>
           <p className="mt-3 text-sm leading-6 text-[var(--fg-muted)] rise rise-delay-1">
-            未确认不进入聊天。干支不对请返回修改。
+            未确认不进入聊天。干支不对请返回修改生辰（排盘按节气月，与常见在线排盘同源口径）。
           </p>
           <div className="panel mt-8 rounded-[var(--radius)] p-5 rise rise-delay-2">
-            <div className="grid grid-cols-4 gap-2">
-              {pillars.map(({ label, p }) => (
-                <div
-                  key={label}
-                  className="rounded-[var(--radius-sm)] border border-[var(--line)] bg-[var(--bg)] px-2 py-3 text-center"
-                >
-                  <div className="mono-label !tracking-[0.12em]">{label}</div>
-                  <div className="display-font mt-2 text-2xl tracking-tight">
-                    {formatPillar(p)}
-                  </div>
-                </div>
-              ))}
-            </div>
+            <PillarBoard chart={state.chart} />
             <div className="mt-5 border-t border-[var(--line)] pt-4">
               <p className="text-sm leading-7 text-[var(--fg-muted)]">
                 日主{" "}
@@ -383,7 +362,6 @@ export function DemoApp() {
               <p className="mt-2 text-sm leading-6 text-[var(--fg-muted)]">
                 {state.chart.summary}
               </p>
-              <p className="mt-3 text-xs text-[var(--fg-dim)]">演示排盘 · 非最终历法权威</p>
             </div>
           </div>
           <div className="mt-6 flex gap-2">

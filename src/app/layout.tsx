@@ -1,24 +1,17 @@
 import type { Metadata } from "next";
-import { Noto_Sans_SC, Space_Grotesk } from "next/font/google";
+import { Noto_Sans_SC } from "next/font/google";
 import { COMPANY, PRODUCT } from "@/lib/brand";
 import "./globals.css";
-
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
 
 const notoSans = Noto_Sans_SC({
   variable: "--font-noto-sans-sc",
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
   title: `${PRODUCT} · ${COMPANY}`,
-  description:
-    "Lunora BaZi — precision BaZi companion 小弦（Nox）. Confirm the chart, then ask with clarity.",
+  description: "Lunora BaZi — 小弦。先确认正确八字，再看见画面如何变化。",
 };
 
 export default function RootLayout({
@@ -28,9 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN">
-      <body className={`${spaceGrotesk.variable} ${notoSans.variable} antialiased`}>
-        {children}
-      </body>
+      <body className={`${notoSans.variable} antialiased`}>{children}</body>
     </html>
   );
 }
