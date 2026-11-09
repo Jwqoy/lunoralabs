@@ -20,6 +20,7 @@ declare module "lunar-javascript" {
     getMonth(): string;
     getDay(): string;
     getTime(): string;
+    getSect(): number;
     setSect(sect: number): void;
   }
 }

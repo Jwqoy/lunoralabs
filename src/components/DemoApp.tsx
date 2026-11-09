@@ -5,7 +5,7 @@ import { BaziTools } from "@/components/BaziTools";
 import { MoonPet } from "@/components/MoonPet";
 import { PillarBoard } from "@/components/PillarBoard";
 import { CHARACTER, CHARACTER_EN, COMPANY, PRODUCT } from "@/lib/brand";
-import { computeChart } from "@/lib/bazi";
+import { computeChart, shichenOf } from "@/lib/bazi";
 import {
   SHORTCUTS,
   PROACTIVE_BANNER,
@@ -31,6 +31,7 @@ const emptyBirth: BirthInput = {
   time: "09:30",
   city: "上海",
   solarTimeHint: true,
+  ziDayBoundary: "late-zi",
 };
 
 export function DemoApp() {
@@ -253,7 +254,7 @@ export function DemoApp() {
           <p className="mono-label rise">传统排盘录入</p>
           <h2 className="display-font mt-3 text-3xl rise">输入出生信息</h2>
           <p className="mt-3 text-sm leading-6 text-[var(--fg-muted)] rise rise-delay-1">
-            公历日期 + 出生时辰 + 性别。排盘按二十四节气定月柱；请尽量使用当地钟表时间。
+            公历 + 钟表时间。月柱按二十四节气；默认晚子时（23点）换日，对齐问真八字。
           </p>
           <form
             className="panel mt-8 space-y-4 rounded-[var(--radius)] p-5 rise rise-delay-2"
@@ -275,7 +276,7 @@ export function DemoApp() {
             </label>
             <div className="grid grid-cols-2 gap-3">
               <label className="block text-xs text-[var(--fg-dim)]">
-                日期
+                公历日期
                 <input
                   required
                   type="date"
@@ -285,7 +286,7 @@ export function DemoApp() {
                 />
               </label>
               <label className="block text-xs text-[var(--fg-dim)]">
-                时间
+                出生时间
                 <input
                   required
                   type="time"
@@ -293,6 +294,15 @@ export function DemoApp() {
                   value={birthDraft.time}
                   onChange={(e) => setBirthDraft((b) => ({ ...b, time: e.target.value }))}
                 />
+                {(() => {
+                  const [hh, mm] = (birthDraft.time || "12:00").split(":").map(Number);
+                  const shi = shichenOf(hh || 0, mm || 0);
+                  return (
+                    <span className="mt-1 block text-[11px] text-[var(--accent)]">
+                      {shi.label}（{shi.branch}）
+                    </span>
+                  );
+                })()}
               </label>
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -322,6 +332,22 @@ export function DemoApp() {
                 </select>
               </label>
             </div>
+            <label className="block text-xs text-[var(--fg-dim)]">
+              子时换日口径
+              <select
+                className="input mt-1.5"
+                value={birthDraft.ziDayBoundary ?? "late-zi"}
+                onChange={(e) =>
+                  setBirthDraft((b) => ({
+                    ...b,
+                    ziDayBoundary: e.target.value as BirthInput["ziDayBoundary"],
+                  }))
+                }
+              >
+                <option value="late-zi">晚子时换日（23点 · 问真默认）</option>
+                <option value="midnight">午夜换日（00点）</option>
+              </select>
+            </label>
             <label className="flex items-start gap-2 text-xs leading-5 text-[var(--fg-dim)]">
               <input
                 type="checkbox"
@@ -331,7 +357,7 @@ export function DemoApp() {
                   setBirthDraft((b) => ({ ...b, solarTimeHint: e.target.checked }))
                 }
               />
-              Demo 使用近似历法；正式版将校准真太阳时与节气。
+              节气月已按精确历法计算。真太阳时（经纬度校正）正式版再启用；现在按当地钟表时间排盘。
             </label>
             <button type="submit" className="btn-primary w-full rounded-[var(--radius)] py-3.5 text-sm">
               排出四柱并核对
@@ -345,7 +371,7 @@ export function DemoApp() {
           <p className="mono-label rise">确认八字</p>
           <h2 className="display-font mt-3 text-3xl rise">请确认这盘正确</h2>
           <p className="mt-3 text-sm leading-6 text-[var(--fg-muted)] rise rise-delay-1">
-            未确认不进入聊天。干支不对请返回修改生辰（排盘按节气月，与常见在线排盘同源口径）。
+            未确认不进入聊天。请与问真等惯用盘逐柱核对；不对请返回改生辰或换日口径。
           </p>
           <div className="panel mt-8 rounded-[var(--radius)] p-5 rise rise-delay-2">
             <PillarBoard chart={state.chart} />
@@ -356,7 +382,18 @@ export function DemoApp() {
                   {state.chart.dayMaster}
                 </span>{" "}
                 · {state.chart.element}
+                {state.chart.meta?.shichen ? (
+                  <>
+                    {" "}
+                    · {state.chart.meta.shichen}
+                  </>
+                ) : null}
               </p>
+              {state.chart.meta?.note ? (
+                <p className="mt-2 text-[11px] leading-5 text-[var(--fg-dim)]">
+                  {state.chart.meta.note}
+                </p>
+              ) : null}
               <p className="mt-2 text-sm leading-6 text-[var(--fg-muted)]">
                 {state.chart.summary}
               </p>

@@ -13,20 +13,32 @@ export type AppStep =
   | "chart"
   | "chat";
 
+/** 晚子时日柱边界：late-zi=23点换日（问真默认）；midnight=午夜换日 */
+export type ZiDayBoundary = "late-zi" | "midnight";
+
 export interface BirthInput {
   name: string;
   gender: "男" | "女" | "保密";
   date: string; // YYYY-MM-DD
   time: string; // HH:mm
   city: string;
-  /** 是否使用真太阳时近似（演示） */
+  /** 真太阳时：Demo1 仅提示，尚未按经纬度校正 */
   solarTimeHint: boolean;
+  /** 子时换日口径，默认 late-zi（对齐问真） */
+  ziDayBoundary?: ZiDayBoundary;
 }
 
 export interface Pillar {
   stem: string;
   branch: string;
   label: string;
+}
+
+export interface ChartMeta {
+  calendar: "gregorian";
+  ziDayBoundary: ZiDayBoundary;
+  shichen: string;
+  note: string;
 }
 
 export interface BaziChart {
@@ -38,6 +50,7 @@ export interface BaziChart {
   element: string;
   summary: string;
   confirmed: boolean;
+  meta?: ChartMeta;
 }
 
 export interface MemoryHints {

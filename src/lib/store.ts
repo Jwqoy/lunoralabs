@@ -1,6 +1,6 @@
 import type { AppState } from "@/types";
 
-const KEY = "lunora-demo1-state-v4";
+const KEY = "lunora-demo1-state-v5";
 
 export const defaultState = (): AppState => ({
   step: "landing",
