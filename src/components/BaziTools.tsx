@@ -23,7 +23,7 @@ export function BaziTools({ chart }: Props) {
     <div className="mt-3 space-y-3">
       <div className="rounded-[var(--radius-sm)] border border-[var(--line)] bg-[var(--bg)] p-3">
         <div className="flex items-center justify-between">
-          <p className="mono-label">天干地支 · 排盘图</p>
+          <p className="mono-label">天干地支 · 排盘图 · 画的笔触</p>
           <p className="text-[10px] text-[var(--fg-dim)]">
             日主 {pack.dayMaster}
             {pack.dayElement}
@@ -58,7 +58,7 @@ export function BaziTools({ chart }: Props) {
       </div>
 
       <div className="rounded-[var(--radius-sm)] border border-[var(--line)] bg-[var(--bg)] p-3">
-        <p className="mono-label">五行势能 · Graph</p>
+        <p className="mono-label">五行势能 · 颜料比重</p>
         <div className="mt-3 space-y-2">
           {pack.elements.map((e) => (
             <div key={e.element} className="flex items-center gap-2">
@@ -91,7 +91,7 @@ export function BaziTools({ chart }: Props) {
       </div>
 
       <div className="rounded-[var(--radius-sm)] border border-[var(--line)] bg-[var(--bg)] p-3">
-        <p className="mono-label">关系工具</p>
+        <p className="mono-label">关系工具 · 构图张力</p>
         <ul className="mt-2 space-y-2">
           {pack.relations.map((r) => (
             <li key={r.id} className="text-xs leading-5 text-[var(--fg-muted)]">

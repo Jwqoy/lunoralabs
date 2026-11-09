@@ -169,18 +169,18 @@ export function buildAnalysis(chart: BaziChart): AnalysisPack {
   const relations: RelationHint[] = [
     {
       id: "day",
-      title: "日主锚点",
-      detail: `${dayStem}${dayEl} · 决策底色。月柱${formatPillar(chart.month)}定外在舞台。`,
+      title: "主色 · 日主",
+      detail: `${dayStem}${dayEl}是画面主色。月柱${formatPillar(chart.month)}是中景舞台，不是整幅画本身。`,
     },
     {
       id: "wx",
-      title: "五行势能",
-      detail: `偏旺 ${strongest.element}（${strongest.pct}%），偏弱 ${weakest.element}（${weakest.pct}%）。演示权重含天干/地支/藏干。`,
+      title: "颜料比重",
+      detail: `偏旺 ${strongest.element}（${strongest.pct}%），偏弱 ${weakest.element}（${weakest.pct}%）。数量不等于旺衰终审（知识库 C 层）。`,
     },
     {
       id: "structure",
-      title: "结构提示",
-      detail: `时柱${formatPillar(chart.hour)}看收尾与表达节奏；年柱${formatPillar(chart.year)}看根基与早年底色。`,
+      title: "远近构图",
+      detail: `年柱${formatPillar(chart.year)}远景根基；时柱${formatPillar(chart.hour)}近处笔触与收尾。大运像长滤镜，流年是当季新颜料。`,
     },
   ];
 

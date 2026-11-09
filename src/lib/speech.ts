@@ -1,7 +1,8 @@
 import { CHARACTER } from "@/lib/brand";
+import { PAINTING_STARTER } from "@/lib/painting";
 import type { VoiceGender } from "@/types";
 
-export const WELCOME_LINE = `你好，我是${CHARACTER}。先把八字盘核对正确，我们再慢慢聊事业和心事。`;
+export const WELCOME_LINE = `你好，我是${CHARACTER}。${PAINTING_STARTER}`;
 
 function pickVoice(gender: VoiceGender): SpeechSynthesisVoice | null {
   if (typeof window === "undefined" || !window.speechSynthesis) return null;
