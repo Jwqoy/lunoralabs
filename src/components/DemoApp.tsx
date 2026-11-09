@@ -43,6 +43,8 @@ export function DemoApp() {
 
   useEffect(() => {
     const loaded = loadState();
+    // Prefer mint accent for fintech default if fresh
+    // v2 store defaults to fintech mint; no migration needed
     setState(loaded);
     if (loaded.birth) setBirthDraft(loaded.birth);
     warmVoices();
@@ -57,8 +59,8 @@ export function DemoApp() {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [state?.messages.length, widgetOpen]);
 
-  const tint = state?.tint ?? "silver";
-  const fontMood = state?.fontMood ?? "serif";
+  const tint = state?.tint ?? "honey";
+  const fontMood = state?.fontMood ?? "classic";
 
   const patch = (partial: Partial<AppState>) => {
     setState((prev) => (prev ? { ...prev, ...partial } : prev));
@@ -81,6 +83,8 @@ export function DemoApp() {
     stopSpeak();
     clearState();
     const fresh = defaultState();
+    fresh.tint = "honey";
+    fresh.fontMood = "classic";
     setState(fresh);
     setBirthDraft(emptyBirth);
     setSettingsOpen(false);
@@ -127,76 +131,78 @@ export function DemoApp() {
 
   if (!state) {
     return (
-      <div className="sky flex min-h-dvh items-center justify-center text-sm text-[var(--mist)]">
-        {CHARACTER}正在醒来…
+      <div className="app-shell flex min-h-dvh items-center justify-center text-sm text-[var(--fg-muted)]">
+        {CHARACTER} 启动中…
       </div>
     );
   }
 
   return (
-    <div
-      className="sky"
-      data-tint={tint}
-      data-font={fontMood}
-      lang="zh-CN"
-    >
+    <div className="app-shell" data-tint={tint} data-font={fontMood} lang="zh-CN">
       {state.step === "landing" && (
-        <section className="relative flex min-h-dvh flex-col justify-end px-6 pb-16 pt-10 sm:justify-center sm:pb-24">
-          <div className="pointer-events-none absolute inset-0">
-            <div className="absolute right-[-10%] top-[-5%] h-[70vh] w-[70vh] max-w-none">
-              <MoonPet size={420} className="h-full w-full opacity-90" />
-            </div>
+        <section className="relative flex min-h-dvh flex-col px-6 pb-10 pt-8 sm:px-10">
+          <div className="flex items-center justify-between">
+            <p className="mono-label">{COMPANY}</p>
+            <span className="chip chip-active">Demo1</span>
           </div>
-          <div className="relative mx-auto w-full max-w-xl rise">
-            <p className="mb-3 text-sm tracking-[0.28em] text-[var(--mist)]">
-              {COMPANY}
-            </p>
-            <h1 className="display-font text-5xl leading-tight tracking-wide text-[var(--moon)] sm:text-6xl">
-              {PRODUCT}
-            </h1>
-            <p className="mt-3 display-font text-2xl text-[var(--accent)] rise rise-delay-1">
-              {CHARACTER}
-              <span className="ml-2 text-base tracking-wide text-[var(--mist)]">/ {CHARACTER_EN}</span>
-            </p>
-            <p className="mt-4 max-w-md text-base leading-relaxed text-[var(--mist)] rise rise-delay-1">
-              浮在手边的八字聊天宠物。先锁定正确八字，再慢慢聊事业与心事。
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3 rise rise-delay-2">
-              <button
-                type="button"
-                className="btn-primary rounded-xl px-6 py-3 text-sm"
-                onClick={() => patch({ step: "voice" })}
-              >
-                开始认识{CHARACTER}
-              </button>
-              <button
-                type="button"
-                className="btn-ghost rounded-xl px-5 py-3 text-sm"
-                onClick={() => {
-                  patch({ step: "birth" });
-                }}
-              >
-                跳过声音，先排盘
-              </button>
+
+          <div className="relative mt-10 flex flex-1 flex-col justify-between gap-10 lg:mt-0 lg:flex-row lg:items-center">
+            <div className="relative z-10 max-w-xl rise">
+              <h1 className="display-font text-[clamp(2.75rem,8vw,5.5rem)] leading-[0.95] text-[var(--fg)]">
+                {PRODUCT}
+              </h1>
+              <p className="mt-5 text-lg text-[var(--fg-muted)] rise rise-delay-1">
+                <span className="display-font text-2xl text-[var(--fg)]">{CHARACTER}</span>
+                <span className="mx-2 text-[var(--fg-dim)]">/</span>
+                <span className="display-font text-xl tracking-tight text-[var(--fg-muted)]">
+                  {CHARACTER_EN}
+                </span>
+              </p>
+              <p className="mt-5 max-w-md text-[0.95rem] leading-7 text-[var(--fg-muted)] rise rise-delay-1">
+                精确八字，随身问答。先确认盘，再问事业与选择——干净、克制、可回听。
+              </p>
+              <div className="mt-9 flex flex-wrap gap-3 rise rise-delay-2">
+                <button
+                  type="button"
+                  className="btn-primary rounded-[var(--radius)] px-6 py-3.5 text-sm"
+                  onClick={() => patch({ step: "voice" })}
+                >
+                  开始 · 认识{CHARACTER}
+                </button>
+                <button
+                  type="button"
+                  className="btn-ghost rounded-[var(--radius)] px-5 py-3.5 text-sm"
+                  onClick={() => patch({ step: "birth" })}
+                >
+                  跳过声音，先排盘
+                </button>
+              </div>
+            </div>
+
+            <div className="pointer-events-none relative mx-auto flex w-full max-w-md flex-1 items-center justify-center lg:max-w-none lg:justify-end">
+              <div className="absolute inset-8 rounded-full border border-[var(--line)]" />
+              <div className="absolute inset-16 rounded-full border border-[var(--line)] opacity-60" />
+              <MoonPet size={280} className="relative" />
             </div>
           </div>
         </section>
       )}
 
       {state.step === "voice" && (
-        <section className="mx-auto flex min-h-dvh max-w-lg flex-col justify-center px-6 py-12">
-          <div className="rise text-center">
-            <MoonPet size={120} className="mx-auto" />
-            <h2 className="display-font mt-4 text-3xl">先听一听{CHARACTER}的声音</h2>
-            <p className="mt-2 text-sm text-[var(--mist)]">
-              同一句欢迎语，可选男声或女声；角色都是{CHARACTER}（{CHARACTER_EN}）。可跳过，之后在设置里随时更换。
-            </p>
+        <section className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-6 py-12">
+          <p className="mono-label rise">Voice</p>
+          <h2 className="display-font mt-3 text-3xl leading-tight rise">
+            试听 {CHARACTER}
+          </h2>
+          <p className="mt-3 text-sm leading-6 text-[var(--fg-muted)] rise rise-delay-1">
+            同一句欢迎语，男声 / 女声可选。角色始终是 {CHARACTER}（{CHARACTER_EN}）。可跳过。
+          </p>
+          <div className="mt-8 flex justify-center rise rise-delay-1">
+            <MoonPet size={96} />
           </div>
-          <div className="panel mt-8 space-y-4 rounded-2xl p-5 rise rise-delay-1">
-            <p className="text-sm leading-relaxed text-[var(--glow)]">
-              「{WELCOME_LINE}」
-            </p>
-            <div className="grid grid-cols-2 gap-3">
+          <div className="panel mt-8 space-y-4 rounded-[var(--radius)] p-5 rise rise-delay-2">
+            <p className="text-sm leading-7 text-[var(--fg)]">「{WELCOME_LINE}」</p>
+            <div className="grid grid-cols-2 gap-2">
               {(
                 [
                   ["female", "女声"],
@@ -206,10 +212,8 @@ export function DemoApp() {
                 <button
                   key={value}
                   type="button"
-                  className={`rounded-xl px-3 py-3 text-sm ${
-                    state.voice === value
-                      ? "btn-primary"
-                      : "btn-ghost"
+                  className={`rounded-[var(--radius-sm)] px-3 py-3 text-sm ${
+                    state.voice === value ? "btn-primary" : "btn-ghost"
                   }`}
                   onClick={() => {
                     patch({ voice: value });
@@ -223,40 +227,41 @@ export function DemoApp() {
             {speaking ? (
               <button
                 type="button"
-                className="btn-ghost w-full rounded-xl py-2 text-xs"
+                className="btn-ghost w-full rounded-[var(--radius-sm)] py-2 text-xs"
                 onClick={stopSpeak}
               >
-                停止播放
+                停止
               </button>
             ) : null}
           </div>
-          <div className="mt-6 flex gap-3 rise rise-delay-2">
+          <div className="mt-6 flex gap-2">
             <button
               type="button"
-              className="btn-ghost flex-1 rounded-xl py-3 text-sm"
+              className="btn-ghost flex-1 rounded-[var(--radius)] py-3 text-sm"
               onClick={() => patch({ step: "birth" })}
             >
               跳过
             </button>
             <button
               type="button"
-              className="btn-primary flex-1 rounded-xl py-3 text-sm"
+              className="btn-primary flex-1 rounded-[var(--radius)] py-3 text-sm"
               onClick={() => patch({ step: "birth" })}
             >
-              用这副声音继续
+              继续
             </button>
           </div>
         </section>
       )}
 
       {state.step === "birth" && (
-        <section className="mx-auto flex min-h-dvh max-w-lg flex-col justify-center px-6 py-12">
-          <h2 className="display-font rise text-3xl">输入正确生辰</h2>
-          <p className="mt-2 text-sm text-[var(--mist)] rise rise-delay-1">
-            八字准确度是 {PRODUCT} 的护城河。请尽量使用当地出生时间；不确定时辰可先填整点，之后可再改。
+        <section className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-6 py-12">
+          <p className="mono-label rise">Chart gate</p>
+          <h2 className="display-font mt-3 text-3xl rise">输入正确生辰</h2>
+          <p className="mt-3 text-sm leading-6 text-[var(--fg-muted)] rise rise-delay-1">
+            准确度是 {PRODUCT} 的护城河。尽量用当地出生时间；时辰不确定可先填整点。
           </p>
           <form
-            className="panel mt-6 space-y-4 rounded-2xl p-5 rise rise-delay-2"
+            className="panel mt-8 space-y-4 rounded-[var(--radius)] p-5 rise rise-delay-2"
             onSubmit={(e) => {
               e.preventDefault();
               if (!birthDraft.date || !birthDraft.time) return;
@@ -264,58 +269,50 @@ export function DemoApp() {
               patch({ birth: birthDraft, chart, step: "chart" });
             }}
           >
-            <label className="block text-xs text-[var(--mist)]">
-              怎么称呼你
+            <label className="block text-xs text-[var(--fg-dim)]">
+              称呼（可选）
               <input
-                className="input mt-1"
+                className="input mt-1.5"
                 value={birthDraft.name}
-                onChange={(e) =>
-                  setBirthDraft((b) => ({ ...b, name: e.target.value }))
-                }
-                placeholder="可选"
+                onChange={(e) => setBirthDraft((b) => ({ ...b, name: e.target.value }))}
+                placeholder="—"
               />
             </label>
             <div className="grid grid-cols-2 gap-3">
-              <label className="block text-xs text-[var(--mist)]">
-                出生日期
+              <label className="block text-xs text-[var(--fg-dim)]">
+                日期
                 <input
                   required
                   type="date"
-                  className="input mt-1"
+                  className="input mt-1.5"
                   value={birthDraft.date}
-                  onChange={(e) =>
-                    setBirthDraft((b) => ({ ...b, date: e.target.value }))
-                  }
+                  onChange={(e) => setBirthDraft((b) => ({ ...b, date: e.target.value }))}
                 />
               </label>
-              <label className="block text-xs text-[var(--mist)]">
-                出生时间
+              <label className="block text-xs text-[var(--fg-dim)]">
+                时间
                 <input
                   required
                   type="time"
-                  className="input mt-1"
+                  className="input mt-1.5"
                   value={birthDraft.time}
-                  onChange={(e) =>
-                    setBirthDraft((b) => ({ ...b, time: e.target.value }))
-                  }
+                  onChange={(e) => setBirthDraft((b) => ({ ...b, time: e.target.value }))}
                 />
               </label>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <label className="block text-xs text-[var(--mist)]">
-                出生城市
+              <label className="block text-xs text-[var(--fg-dim)]">
+                城市
                 <input
-                  className="input mt-1"
+                  className="input mt-1.5"
                   value={birthDraft.city}
-                  onChange={(e) =>
-                    setBirthDraft((b) => ({ ...b, city: e.target.value }))
-                  }
+                  onChange={(e) => setBirthDraft((b) => ({ ...b, city: e.target.value }))}
                 />
               </label>
-              <label className="block text-xs text-[var(--mist)]">
-                性别（排盘参考）
+              <label className="block text-xs text-[var(--fg-dim)]">
+                性别
                 <select
-                  className="input mt-1"
+                  className="input mt-1.5"
                   value={birthDraft.gender}
                   onChange={(e) =>
                     setBirthDraft((b) => ({
@@ -330,114 +327,119 @@ export function DemoApp() {
                 </select>
               </label>
             </div>
-            <label className="flex items-start gap-2 text-xs leading-relaxed text-[var(--mist)]">
+            <label className="flex items-start gap-2 text-xs leading-5 text-[var(--fg-dim)]">
               <input
                 type="checkbox"
-                className="mt-0.5"
+                className="mt-0.5 accent-[var(--accent)]"
                 checked={birthDraft.solarTimeHint}
                 onChange={(e) =>
-                  setBirthDraft((b) => ({
-                    ...b,
-                    solarTimeHint: e.target.checked,
-                  }))
+                  setBirthDraft((b) => ({ ...b, solarTimeHint: e.target.checked }))
                 }
               />
-              演示将按近似历法排盘；正式版会提供更严格的真太阳时与节气校准。
+              Demo 使用近似历法；正式版将校准真太阳时与节气。
             </label>
-            <button type="submit" className="btn-primary w-full rounded-xl py-3 text-sm">
-              排出四柱，核对准确性
+            <button type="submit" className="btn-primary w-full rounded-[var(--radius)] py-3.5 text-sm">
+              排盘并核对
             </button>
           </form>
         </section>
       )}
 
       {state.step === "chart" && state.chart && (
-        <section className="mx-auto flex min-h-dvh max-w-lg flex-col justify-center px-6 py-12">
-          <h2 className="display-font rise text-3xl">请确认这盘正确</h2>
-          <p className="mt-2 text-sm text-[var(--mist)] rise rise-delay-1">
-            未确认前不会进入专属聊天。若干支与你惯用盘不一致，请返回修改生辰。
+        <section className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-6 py-12">
+          <p className="mono-label rise">Confirm</p>
+          <h2 className="display-font mt-3 text-3xl rise">确认四柱</h2>
+          <p className="mt-3 text-sm leading-6 text-[var(--fg-muted)] rise rise-delay-1">
+            未确认不进入聊天。干支不对请返回修改。
           </p>
-          <div className="panel mt-6 rounded-2xl p-5 rise rise-delay-2">
-            <div className="grid grid-cols-4 gap-2 text-center">
+          <div className="panel mt-8 rounded-[var(--radius)] p-5 rise rise-delay-2">
+            <div className="grid grid-cols-4 gap-2">
               {pillars.map(({ label, p }) => (
                 <div
                   key={label}
-                  className="rounded-xl border border-[var(--line)] bg-black/20 px-2 py-3"
+                  className="rounded-[var(--radius-sm)] border border-[var(--line)] bg-[var(--bg)] px-2 py-3 text-center"
                 >
-                  <div className="text-[10px] tracking-widest text-[var(--mist)]">
-                    {label}柱
-                  </div>
-                  <div className="display-font mt-1 text-2xl tracking-wider">
+                  <div className="mono-label !tracking-[0.12em]">{label}</div>
+                  <div className="display-font mt-2 text-2xl tracking-tight">
                     {formatPillar(p)}
                   </div>
                 </div>
               ))}
             </div>
-            <p className="mt-4 text-sm leading-relaxed text-[var(--glow)]">
-              日主 <span className="text-[var(--accent)]">{state.chart.dayMaster}</span>
-              （{state.chart.element}）。{state.chart.summary}
-            </p>
-            <p className="mt-3 text-xs text-[var(--mist)]">
-              【演示排盘】历法为 Demo 近似实现，用于产品环路验证。
-            </p>
+            <div className="mt-5 border-t border-[var(--line)] pt-4">
+              <p className="text-sm leading-7 text-[var(--fg-muted)]">
+                日主{" "}
+                <span className="display-font text-[var(--fg)]">
+                  {state.chart.dayMaster}
+                </span>{" "}
+                · {state.chart.element}
+              </p>
+              <p className="mt-2 text-sm leading-6 text-[var(--fg-muted)]">
+                {state.chart.summary}
+              </p>
+              <p className="mt-3 text-xs text-[var(--fg-dim)]">演示排盘 · 非最终历法权威</p>
+            </div>
           </div>
-          <div className="mt-6 flex gap-3">
+          <div className="mt-6 flex gap-2">
             <button
               type="button"
-              className="btn-ghost flex-1 rounded-xl py-3 text-sm"
+              className="btn-ghost flex-1 rounded-[var(--radius)] py-3 text-sm"
               onClick={() => patch({ step: "birth", chart: null })}
             >
-              返回修改
+              返回
             </button>
             <button
               type="button"
-              className="btn-primary flex-1 rounded-xl py-3 text-sm"
+              className="btn-primary flex-1 rounded-[var(--radius)] py-3 text-sm"
               onClick={onConfirmChart}
             >
-              确认无误，绑定{CHARACTER}
+              确认 · 绑定{CHARACTER}
             </button>
           </div>
         </section>
       )}
 
       {state.step === "chat" && state.chart?.confirmed && (
-        <section className="relative mx-auto flex min-h-dvh max-w-2xl flex-col px-4 pb-28 pt-6 sm:px-6">
+        <section className="relative mx-auto flex min-h-dvh w-full max-w-xl flex-col px-4 pb-28 pt-6 sm:px-6">
           {!state.proactiveDismissed && (
-            <div className="panel mb-4 flex items-start gap-3 rounded-2xl p-4 rise">
-              <MoonPet size={44} glowing={false} />
+            <div className="panel mb-4 flex items-start gap-3 rounded-[var(--radius)] p-4 rise">
+              <MoonPet size={40} glowing={false} />
               <div className="flex-1">
-                <p className="text-xs tracking-widest text-[var(--mist)]">日运问候</p>
-                <p className="mt-1 text-sm leading-relaxed">{PROACTIVE_BANNER}</p>
+                <p className="mono-label">Daily signal</p>
+                <p className="mt-2 text-sm leading-6 text-[var(--fg-muted)]">{PROACTIVE_BANNER}</p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   <button
                     type="button"
-                    className="btn-primary rounded-lg px-3 py-1.5 text-xs"
+                    className="btn-primary rounded-[var(--radius-sm)] px-3 py-1.5 text-xs"
                     onClick={() =>
                       play("今天宜收敛锋芒，把力气留给真正重要的一件事。我在这儿陪你。")
                     }
                   >
-                    用当前声音播报
+                    播报
                   </button>
                   <button
                     type="button"
-                    className="btn-ghost rounded-lg px-3 py-1.5 text-xs"
+                    className="btn-ghost rounded-[var(--radius-sm)] px-3 py-1.5 text-xs"
                     onClick={() => patch({ proactiveDismissed: true })}
                   >
-                    知道了
+                    关闭
                   </button>
                 </div>
               </div>
             </div>
           )}
 
-          <header className="mb-4 flex items-center justify-between gap-3">
+          <header className="mb-5 flex items-end justify-between gap-3">
             <div>
-              <p className="text-xs tracking-[0.22em] text-[var(--mist)]">{COMPANY}</p>
-              <h2 className="display-font text-2xl">与{CHARACTER}对话</h2>
+              <p className="mono-label">{COMPANY}</p>
+              <h2 className="display-font mt-1 text-2xl tracking-tight">
+                {CHARACTER}
+                <span className="ml-2 text-base text-[var(--fg-dim)]">{PRODUCT}</span>
+              </h2>
             </div>
             <button
               type="button"
-              className="btn-ghost rounded-xl px-3 py-2 text-xs"
+              className="btn-ghost rounded-[var(--radius-sm)] px-3 py-2 text-xs"
               onClick={() => setSettingsOpen(true)}
             >
               设置
@@ -449,7 +451,7 @@ export function DemoApp() {
               <button
                 key={s.id}
                 type="button"
-                className="btn-ghost shrink-0 rounded-full px-3 py-1.5 text-xs"
+                className="chip shrink-0"
                 onClick={() => sendPrompt(s.prompt)}
               >
                 {s.label}
@@ -457,23 +459,23 @@ export function DemoApp() {
             ))}
           </div>
 
-          <div className="panel flex-1 space-y-3 overflow-y-auto scroll-thin rounded-2xl p-4">
+          <div className="panel flex-1 space-y-3 overflow-y-auto scroll-thin rounded-[var(--radius)] p-4">
             {state.messages.map((m) => (
               <div
                 key={m.id}
                 className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[92%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
+                  className={`max-w-[92%] rounded-[var(--radius)] px-3.5 py-2.5 text-sm leading-6 ${
                     m.role === "user"
-                      ? "bg-[color-mix(in_srgb,var(--accent)_28%,transparent)] text-[var(--moon)]"
-                      : "bg-black/25 text-[var(--glow)]"
+                      ? "bg-[var(--accent-dim)] text-[var(--fg)]"
+                      : "bg-[var(--bg)] text-[var(--fg-muted)] border border-[var(--line)]"
                   }`}
                 >
                   {m.role === "moon" ? (
-                    <div className="mb-1 flex items-center gap-2">
-                      <MoonPet size={28} glowing={false} />
-                      <span className="text-[10px] tracking-widest text-[var(--mist)]">
+                    <div className="mb-2 flex items-center gap-2">
+                      <MoonPet size={24} glowing={false} />
+                      <span className="mono-label !normal-case !tracking-[0.08em]">
                         {CHARACTER}
                       </span>
                     </div>
@@ -482,10 +484,12 @@ export function DemoApp() {
                   {m.role === "moon" ? (
                     <button
                       type="button"
-                      className="mt-2 text-xs text-[var(--accent)] underline-offset-2 hover:underline"
-                      onClick={() => play(m.text.replace(/【演示解读】[\s\S]*$/, "").trim())}
+                      className="mt-2 text-xs font-medium text-[var(--accent)]"
+                      onClick={() =>
+                        play(m.text.replace(/【演示解读】[\s\S]*$/, "").trim())
+                      }
                     >
-                      {speaking ? "朗读中…" : "播放朗读"}
+                      {speaking ? "朗读中…" : "播放"}
                     </button>
                   ) : null}
                 </div>
@@ -507,25 +511,24 @@ export function DemoApp() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
             />
-            <button type="submit" className="btn-primary rounded-xl px-4 text-sm">
+            <button type="submit" className="btn-primary rounded-[var(--radius)] px-4 text-sm">
               发送
             </button>
           </form>
 
-          {/* Floating widget feel */}
           <div className="fixed bottom-5 right-5 z-30 flex flex-col items-end gap-2">
             {widgetOpen ? (
-              <div className="panel w-56 rounded-2xl p-3 text-xs shadow-2xl">
-                <p className="display-font text-sm">{CHARACTER}在线</p>
-                <p className="mt-1 text-[var(--mist)]">
+              <div className="panel w-52 rounded-[var(--radius)] p-3 text-xs shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
+                <p className="display-font text-sm tracking-tight">{CHARACTER} · online</p>
+                <p className="mt-1 text-[var(--fg-dim)]">
                   日主 {state.chart.dayMaster} · {state.voice === "female" ? "女声" : "男声"}
                 </p>
                 <button
                   type="button"
-                  className="btn-ghost mt-2 w-full rounded-lg py-1.5"
+                  className="btn-ghost mt-2 w-full rounded-[var(--radius-sm)] py-1.5"
                   onClick={() => setWidgetOpen(false)}
                 >
-                  收起挂件
+                  收起
                 </button>
               </div>
             ) : null}
@@ -535,28 +538,28 @@ export function DemoApp() {
               className="rounded-full focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
               onClick={() => setWidgetOpen((v) => !v)}
             >
-              <MoonPet size={64} />
+              <MoonPet size={58} />
             </button>
           </div>
         </section>
       )}
 
       {settingsOpen && (
-        <div className="fixed inset-0 z-40 flex items-end justify-center bg-black/55 p-4 sm:items-center">
-          <div className="panel w-full max-w-md rounded-2xl p-5">
+        <div className="fixed inset-0 z-40 flex items-end justify-center bg-black/70 p-4 sm:items-center">
+          <div className="panel w-full max-w-md rounded-[var(--radius)] p-5">
             <div className="flex items-center justify-between">
-              <h3 className="display-font text-xl">设置</h3>
+              <h3 className="display-font text-xl tracking-tight">设置</h3>
               <button
                 type="button"
-                className="btn-ghost rounded-lg px-2 py-1 text-xs"
+                className="btn-ghost rounded-[var(--radius-sm)] px-2 py-1 text-xs"
                 onClick={() => setSettingsOpen(false)}
               >
                 关闭
               </button>
             </div>
-            <div className="mt-4 space-y-4 text-sm">
+            <div className="mt-5 space-y-5 text-sm">
               <div>
-                <p className="mb-2 text-xs text-[var(--mist)]">声音</p>
+                <p className="mono-label mb-2">Voice · {CHARACTER}</p>
                 <div className="grid grid-cols-2 gap-2">
                   {(
                     [
@@ -567,7 +570,7 @@ export function DemoApp() {
                     <button
                       key={value}
                       type="button"
-                      className={`rounded-xl py-2 ${
+                      className={`rounded-[var(--radius-sm)] py-2 ${
                         state.voice === value ? "btn-primary" : "btn-ghost"
                       }`}
                       onClick={() => {
@@ -581,19 +584,19 @@ export function DemoApp() {
                 </div>
               </div>
               <div>
-                <p className="mb-2 text-xs text-[var(--mist)]">月色外观</p>
+                <p className="mono-label mb-2">Accent</p>
                 <div className="grid grid-cols-3 gap-2">
                   {(
                     [
-                      ["silver", "银月"],
-                      ["honey", "蜜月"],
-                      ["jade", "青月"],
+                      ["honey", "Mint"],
+                      ["silver", "Ice"],
+                      ["jade", "Cyan"],
                     ] as [MoonTint, string][]
                   ).map(([value, label]) => (
                     <button
                       key={value}
                       type="button"
-                      className={`rounded-xl py-2 ${
+                      className={`rounded-[var(--radius-sm)] py-2 ${
                         state.tint === value ? "btn-primary" : "btn-ghost"
                       }`}
                       onClick={() => patch({ tint: value })}
@@ -604,19 +607,19 @@ export function DemoApp() {
                 </div>
               </div>
               <div>
-                <p className="mb-2 text-xs text-[var(--mist)]">字体气质</p>
+                <p className="mono-label mb-2">Type weight</p>
                 <div className="grid grid-cols-3 gap-2">
                   {(
                     [
-                      ["serif", "宋意"],
-                      ["rounded", "手写"],
-                      ["classic", "清晰"],
+                      ["classic", "Default"],
+                      ["serif", "Tight"],
+                      ["rounded", "Soft"],
                     ] as [FontMood, string][]
                   ).map(([value, label]) => (
                     <button
                       key={value}
                       type="button"
-                      className={`rounded-xl py-2 ${
+                      className={`rounded-[var(--radius-sm)] py-2 ${
                         state.fontMood === value ? "btn-primary" : "btn-ghost"
                       }`}
                       onClick={() => patch({ fontMood: value })}
@@ -627,8 +630,8 @@ export function DemoApp() {
                 </div>
               </div>
               {(state.memory.career || state.memory.cares || state.memory.identity) && (
-                <div className="rounded-xl border border-[var(--line)] p-3 text-xs text-[var(--mist)]">
-                  <p className="mb-1 text-[var(--glow)]">轻量记忆</p>
+                <div className="rounded-[var(--radius-sm)] border border-[var(--line)] p-3 text-xs text-[var(--fg-dim)]">
+                  <p className="mb-1 text-[var(--fg-muted)]">Memory</p>
                   {state.memory.career ? <p>事业：{state.memory.career}</p> : null}
                   {state.memory.cares ? <p>在意：{state.memory.cares}</p> : null}
                   {state.memory.identity ? <p>身份：{state.memory.identity}</p> : null}
@@ -636,10 +639,10 @@ export function DemoApp() {
               )}
               <button
                 type="button"
-                className="btn-ghost w-full rounded-xl py-2 text-xs text-[var(--danger)]"
+                className="btn-ghost w-full rounded-[var(--radius-sm)] py-2 text-xs text-[var(--danger)]"
                 onClick={resetAll}
               >
-                清除本地演示数据并重来
+                清除本地数据
               </button>
             </div>
           </div>

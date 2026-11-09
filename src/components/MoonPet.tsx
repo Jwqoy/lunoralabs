@@ -6,6 +6,7 @@ type Props = {
   glowing?: boolean;
 };
 
+/** Minimal mark for 小弦 / Nox — geometric, fintech-clean */
 export function MoonPet({ size = 160, className = "", glowing = true }: Props) {
   return (
     <div
@@ -15,58 +16,41 @@ export function MoonPet({ size = 160, className = "", glowing = true }: Props) {
     >
       {glowing ? (
         <span
-          className="glow-ring absolute inset-[-18%] rounded-full"
+          className="glow-ring absolute inset-[-12%] rounded-full"
           style={{
             background:
-              "radial-gradient(circle, var(--tint-glow) 0%, transparent 68%)",
+              "radial-gradient(circle, color-mix(in srgb, var(--accent) 35%, transparent) 0%, transparent 70%)",
           }}
         />
       ) : null}
       <svg
-        className="float-moon relative drop-shadow-[0_8px_24px_rgba(0,0,0,0.35)]"
+        className="float-moon relative"
         width={size}
         height={size}
         viewBox="0 0 200 200"
         fill="none"
       >
         <defs>
-          <radialGradient id="moonFace" cx="38%" cy="32%" r="68%">
-            <stop offset="0%" stopColor="#f7f4ec" />
-            <stop offset="55%" stopColor="#e6ebf5" />
-            <stop offset="100%" stopColor="#b7c2d8" />
-          </radialGradient>
-          <radialGradient id="cheek" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#e8b59a" stopOpacity="0.55" />
-            <stop offset="100%" stopColor="#e8b59a" stopOpacity="0" />
-          </radialGradient>
+          <linearGradient id="noxDisk" x1="30" y1="20" x2="170" y2="180" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#f7f8fa" />
+            <stop offset="1" stopColor="#c5cad6" />
+          </linearGradient>
         </defs>
-        <circle cx="100" cy="100" r="78" fill="url(#moonFace)" />
-        <ellipse cx="72" cy="88" rx="7" ry="9" fill="#3a4458" />
-        <ellipse cx="118" cy="88" rx="7" ry="9" fill="#3a4458" />
-        <circle cx="74" cy="86" r="2.2" fill="#f5f7fb" />
-        <circle cx="120" cy="86" r="2.2" fill="#f5f7fb" />
+        <circle cx="100" cy="100" r="72" fill="url(#noxDisk)" />
+        <circle cx="100" cy="100" r="72" stroke="rgba(0,0,0,0.08)" strokeWidth="1" />
+        {/* crescent cut for mark clarity */}
+        <circle cx="128" cy="88" r="54" fill="var(--bg, #07080a)" opacity="0.08" />
+        <circle cx="78" cy="92" r="5" fill="#12141a" />
+        <circle cx="112" cy="92" r="5" fill="#12141a" />
         <path
-          d="M86 112c6 8 22 8 28 0"
-          stroke="#5a657a"
-          strokeWidth="3.2"
+          d="M86 118c7 7 21 7 28 0"
+          stroke="#12141a"
+          strokeWidth="3"
           strokeLinecap="round"
           fill="none"
         />
-        <circle cx="62" cy="104" r="10" fill="url(#cheek)" />
-        <circle cx="132" cy="104" r="10" fill="url(#cheek)" />
-        <ellipse cx="128" cy="58" rx="14" ry="9" fill="#c5cddd" opacity="0.45" />
-        <ellipse cx="70" cy="130" rx="11" ry="7" fill="#c5cddd" opacity="0.28" />
-        {/* tiny ears / petal tips for pet feel */}
-        <path
-          d="M48 54c8-18 22-22 28-18-14 8-20 20-22 30-4-4-6-8-6-12z"
-          fill="#dfe5f2"
-          opacity="0.9"
-        />
-        <path
-          d="M152 54c-8-18-22-22-28-18 14 8 20 20 22 30 4-4 6-8 6-12z"
-          fill="#dfe5f2"
-          opacity="0.9"
-        />
+        <circle cx="136" cy="62" r="10" fill="#aeb4c2" opacity="0.35" />
+        <circle cx="64" cy="128" r="7" fill="#aeb4c2" opacity="0.25" />
       </svg>
     </div>
   );

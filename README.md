@@ -26,9 +26,13 @@ npm run dev
 
 打开 [http://localhost:3000](http://localhost:3000)。
 
+## 设计方向
+
+Revolut / Robinhood 式暗色 fintech：冷静精确、强标题层级、稀疏留白；避免玄学紫 / 奶油庙宇风。角色仍是小弦（Nox）。
+
 ## 栈
 
-Next.js · React · TypeScript · Tailwind CSS · Web Speech API（TTS）
+Next.js · React · TypeScript · Tailwind CSS · Web Speech API（TTS） · Space Grotesk + Noto Sans SC
 
 ## 创始人
 

@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
-import { Ma_Shan_Zheng, Noto_Sans_SC, Noto_Serif_SC } from "next/font/google";
+import { Noto_Sans_SC, Space_Grotesk } from "next/font/google";
 import { COMPANY, PRODUCT } from "@/lib/brand";
 import "./globals.css";
+
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
 
 const notoSans = Noto_Sans_SC({
   variable: "--font-noto-sans-sc",
@@ -9,22 +15,10 @@ const notoSans = Noto_Sans_SC({
   weight: ["400", "500", "700"],
 });
 
-const notoSerif = Noto_Serif_SC({
-  variable: "--font-noto-serif-sc",
-  subsets: ["latin"],
-  weight: ["500", "700"],
-});
-
-const maShan = Ma_Shan_Zheng({
-  variable: "--font-ma-shan",
-  subsets: ["latin"],
-  weight: ["400"],
-});
-
 export const metadata: Metadata = {
   title: `${PRODUCT} · ${COMPANY}`,
   description:
-    "Lunora BaZi — 八字聊天宠物小弦（Nox）。先确认正确八字，再专属陪伴问答。",
+    "Lunora BaZi — precision BaZi companion 小弦（Nox）. Confirm the chart, then ask with clarity.",
 };
 
 export default function RootLayout({
@@ -34,9 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN">
-      <body
-        className={`${notoSans.variable} ${notoSerif.variable} ${maShan.variable} antialiased`}
-      >
+      <body className={`${spaceGrotesk.variable} ${notoSans.variable} antialiased`}>
         {children}
       </body>
     </html>
