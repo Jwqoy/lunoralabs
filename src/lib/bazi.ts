@@ -1,6 +1,11 @@
 import { Solar } from "lunar-javascript";
 import { CHARACTER } from "@/lib/brand";
-import type { BaziChart, BirthInput, Pillar, ZiDayBoundary } from "@/types";
+import type {
+  BaziChart,
+  BirthInput,
+  Pillar,
+  ZiDayBoundary,
+} from "@/types";
 
 export const STEM_ELEMENT: Record<string, string> = {
   甲: "木",
@@ -135,6 +140,30 @@ export function computeChart(birth: BirthInput): BaziChart {
 
 export function formatPillar(p: Pillar) {
   return `${p.stem}${p.branch}`;
+}
+
+export function isLateZiClock(time: string): boolean {
+  const [hh] = (time || "").split(":").map(Number);
+  return hh === 23;
+}
+
+/** When birth is 23:xx, show the other 子时口径 so user can match 问真/习惯盘. */
+export function alternateBoundaryPreview(birth: BirthInput): {
+  boundary: ZiDayBoundary;
+  label: string;
+  day: string;
+  hour: string;
+} | null {
+  if (!isLateZiClock(birth.time)) return null;
+  const current = birth.ziDayBoundary ?? "late-zi";
+  const other: ZiDayBoundary = current === "late-zi" ? "midnight" : "late-zi";
+  const alt = computeChart({ ...birth, ziDayBoundary: other });
+  return {
+    boundary: other,
+    label: other === "late-zi" ? "晚子时换日" : "午夜换日",
+    day: formatPillar(alt.day),
+    hour: formatPillar(alt.hour),
+  };
 }
 
 export function chartLines(chart: BaziChart) {

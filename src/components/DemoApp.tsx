@@ -5,7 +5,13 @@ import { BaziTools } from "@/components/BaziTools";
 import { MoonPet } from "@/components/MoonPet";
 import { PillarBoard } from "@/components/PillarBoard";
 import { CHARACTER, CHARACTER_EN, COMPANY, PRODUCT } from "@/lib/brand";
-import { computeChart, shichenOf } from "@/lib/bazi";
+import {
+  alternateBoundaryPreview,
+  computeChart,
+  formatPillar,
+  isLateZiClock,
+  shichenOf,
+} from "@/lib/bazi";
 import {
   SHORTCUTS,
   PROACTIVE_BANNER,
@@ -348,6 +354,12 @@ export function DemoApp() {
                 <option value="midnight">午夜换日（00点）</option>
               </select>
             </label>
+            {isLateZiClock(birthDraft.time) ? (
+              <p className="rounded-[var(--radius-sm)] bg-[var(--pale-sage)] px-3 py-2 text-[11px] leading-5 text-[var(--fg-muted)]">
+                出生在 23 点档（晚子时）：日柱会因换日口径不同。默认对齐问真「23
+                点换日」；若你惯用午夜换日，请在上方改口径。
+              </p>
+            ) : null}
             <label className="flex items-start gap-2 text-xs leading-5 text-[var(--fg-dim)]">
               <input
                 type="checkbox"
@@ -394,6 +406,19 @@ export function DemoApp() {
                   {state.chart.meta.note}
                 </p>
               ) : null}
+              {state.birth && isLateZiClock(state.birth.time)
+                ? (() => {
+                    const alt = alternateBoundaryPreview(state.birth);
+                    if (!alt) return null;
+                    return (
+                      <p className="mt-3 rounded-[var(--radius-sm)] bg-[var(--bg-soft)] px-3 py-2 text-[11px] leading-5 text-[var(--fg-muted)]">
+                        对照 · {alt.label}：日柱 {alt.day} · 时柱 {alt.hour}
+                        （当前已选日柱 {formatPillar(state.chart.day)} · 时柱{" "}
+                        {formatPillar(state.chart.hour)}）
+                      </p>
+                    );
+                  })()
+                : null}
               <p className="mt-2 text-sm leading-6 text-[var(--fg-muted)]">
                 {state.chart.summary}
               </p>
