@@ -19,7 +19,7 @@ import {
   greetingMessage,
   userMessage,
 } from "@/lib/chat";
-import { WELCOME_LINE, speak, warmVoices } from "@/lib/speech";
+import { AUDITION_LINE, describeVoice, speak, warmVoices } from "@/lib/speech";
 import { clearState, defaultState, loadState, saveState } from "@/lib/store";
 import type {
   AppState,
@@ -47,6 +47,7 @@ export function DemoApp() {
   const [speaking, setSpeaking] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [widgetOpen, setWidgetOpen] = useState(true);
+  const [voiceLabel, setVoiceLabel] = useState("");
   const [, startTransition] = useTransition();
   const stopRef = useRef<(() => void) | null>(null);
   const chatEndRef = useRef<HTMLDivElement | null>(null);
@@ -56,6 +57,12 @@ export function DemoApp() {
     setState(loaded);
     if (loaded.birth) setBirthDraft(loaded.birth);
     warmVoices();
+    const refreshLabel = () => setVoiceLabel(describeVoice(loaded.voice));
+    refreshLabel();
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      window.speechSynthesis.addEventListener("voiceschanged", refreshLabel);
+      return () => window.speechSynthesis.removeEventListener("voiceschanged", refreshLabel);
+    }
   }, []);
 
   useEffect(() => {
@@ -184,7 +191,7 @@ export function DemoApp() {
             <div className="pointer-events-none relative mx-auto flex w-full max-w-md flex-1 items-center justify-center lg:max-w-none lg:justify-end">
               <div className="absolute inset-8 rounded-full border border-[var(--line)]" />
               <div className="absolute inset-16 rounded-full border border-[var(--line)] opacity-60" />
-              <MoonPet size={280} className="relative" />
+              <MoonPet size={280} className="relative" speaking={speaking} />
             </div>
           </div>
         </section>
@@ -197,13 +204,13 @@ export function DemoApp() {
             试听 {CHARACTER}
           </h2>
           <p className="mt-3 text-sm leading-6 text-[var(--fg-muted)] rise rise-delay-1">
-            同一句欢迎语，男声 / 女声可选。角色始终是 {CHARACTER}（{CHARACTER_EN}）。可跳过。
+            同一角色 {CHARACTER}（{CHARACTER_EN}），两套系统音色。Demo 用本机 TTS，正式版会换云端神经音色。
           </p>
           <div className="mt-8 flex justify-center rise rise-delay-1">
-            <MoonPet size={96} />
+            <MoonPet size={112} speaking={speaking} />
           </div>
           <div className="panel mt-8 space-y-4 rounded-[var(--radius)] p-5 rise rise-delay-2">
-            <p className="text-sm leading-7 text-[var(--fg)]">「{WELCOME_LINE}」</p>
+            <p className="text-sm leading-7 text-[var(--fg)]">「{AUDITION_LINE}」</p>
             <div className="grid grid-cols-2 gap-2">
               {(
                 [
@@ -219,13 +226,19 @@ export function DemoApp() {
                   }`}
                   onClick={() => {
                     patch({ voice: value });
-                    play(WELCOME_LINE, value);
+                    setVoiceLabel(describeVoice(value));
+                    play(AUDITION_LINE, value);
                   }}
                 >
                   试听{label}
                 </button>
               ))}
             </div>
+            {voiceLabel ? (
+              <p className="text-[11px] leading-5 text-[var(--fg-dim)]">
+                当前选用：{voiceLabel}
+              </p>
+            ) : null}
             {speaking ? (
               <button
                 type="button"
@@ -447,7 +460,7 @@ export function DemoApp() {
         <section className="relative mx-auto flex min-h-dvh w-full max-w-xl flex-col px-4 pb-28 pt-6 sm:px-6">
           {!state.proactiveDismissed && (
             <div className="panel mb-4 flex items-start gap-3 rounded-[var(--radius)] p-4 rise">
-              <MoonPet size={40} glowing={false} />
+              <MoonPet size={40} glowing={false} speaking={speaking} />
               <div className="flex-1">
                 <p className="mono-label">Daily signal</p>
                 <p className="mt-2 text-sm leading-6 text-[var(--fg-muted)]">{PROACTIVE_BANNER}</p>
@@ -634,7 +647,7 @@ export function DemoApp() {
               className="rounded-full focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
               onClick={() => setWidgetOpen((v) => !v)}
             >
-              <MoonPet size={58} />
+              <MoonPet size={58} speaking={speaking} />
             </button>
           </div>
         </section>
@@ -693,13 +706,19 @@ export function DemoApp() {
                       }`}
                       onClick={() => {
                         patch({ voice: value });
-                        play(WELCOME_LINE, value);
+                        setVoiceLabel(describeVoice(value));
+                        play(AUDITION_LINE, value);
                       }}
                     >
                       {label}
                     </button>
                   ))}
                 </div>
+                {voiceLabel ? (
+                  <p className="mt-2 text-[11px] leading-5 text-[var(--fg-dim)]">
+                    当前选用：{voiceLabel}
+                  </p>
+                ) : null}
               </div>
               <div>
                 <p className="mono-label mb-2">Accent</p>

@@ -85,18 +85,112 @@ body {
   }
 }
 
-@keyframes float-y {
+@keyframes moon-idle {
   0%,
   100% {
-    transform: translateY(0);
+    transform: translateY(0) rotate(-2deg) scale(1);
   }
-  50% {
-    transform: translateY(-4px);
+  35% {
+    transform: translateY(-5px) rotate(2.5deg) scale(1.02);
+  }
+  70% {
+    transform: translateY(-2px) rotate(-1deg) scale(0.99);
   }
 }
 
-.float-moon {
-  animation: float-y 7s ease-in-out infinite;
+@keyframes moon-speak {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1deg) scale(1);
+  }
+  25% {
+    transform: translateY(-6px) rotate(3deg) scale(1.045);
+  }
+  50% {
+    transform: translateY(-1px) rotate(-2deg) scale(1.01);
+  }
+  75% {
+    transform: translateY(-5px) rotate(2deg) scale(1.035);
+  }
+}
+
+@keyframes moon-blink {
+  0%,
+  42%,
+  48%,
+  100% {
+    transform: scaleY(1);
+  }
+  45% {
+    transform: scaleY(0.12);
+  }
+}
+
+@keyframes moon-mouth-talk {
+  0%,
+  100% {
+    transform: translateY(0) scaleX(1);
+  }
+  50% {
+    transform: translateY(1.2px) scaleX(1.18);
+  }
+}
+
+@keyframes moon-halo-pulse {
+  0%,
+  100% {
+    opacity: 0.22;
+    transform: scale(0.92);
+  }
+  50% {
+    opacity: 0.48;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes moon-fleck {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.moon-stage .moon-body {
+  transform-origin: 50% 55%;
+  animation: moon-idle 4.8s ease-in-out infinite;
+  will-change: transform;
+}
+
+.moon-stage[data-mood="speak"] .moon-body,
+.moon-stage[data-mood="listen"] .moon-body {
+  animation: moon-speak 1.35s ease-in-out infinite;
+}
+
+.moon-stage .moon-eye {
+  transform-origin: center;
+  animation: moon-blink 5.2s ease-in-out infinite;
+}
+
+.moon-stage .moon-eye-r {
+  animation-delay: 0.12s;
+}
+
+.moon-stage[data-mood="speak"] .moon-mouth {
+  transform-origin: 0px 5px;
+  animation: moon-mouth-talk 0.34s ease-in-out infinite;
+}
+
+.moon-halo {
+  background: radial-gradient(circle, rgba(126, 141, 124, 0.35) 0%, rgba(126, 141, 124, 0) 70%);
+  animation: moon-halo-pulse 1.6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.moon-fleck {
+  animation: moon-fleck 3.4s ease-in-out infinite;
 }
 
 .glow-ring {
