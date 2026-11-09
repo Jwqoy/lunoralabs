@@ -4,6 +4,8 @@ export type MoonTint = "silver" | "honey" | "jade";
 
 export type FontMood = "serif" | "rounded" | "classic";
 
+export type ReplyMode = "chat" | "analysis";
+
 export type AppStep =
   | "landing"
   | "voice"
@@ -49,6 +51,9 @@ export interface ChatMessage {
   role: "moon" | "user" | "system";
   text: string;
   demoLabel?: boolean;
+  mode?: ReplyMode;
+  /** Attach analysis tools only in analysis-mode replies */
+  showTools?: boolean;
   createdAt: number;
 }
 
@@ -57,6 +62,7 @@ export interface AppState {
   voice: VoiceGender;
   tint: MoonTint;
   fontMood: FontMood;
+  replyMode: ReplyMode;
   birth: BirthInput | null;
   chart: BaziChart | null;
   memory: MemoryHints;

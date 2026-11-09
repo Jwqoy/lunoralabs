@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { BaziTools } from "@/components/BaziTools";
 import { MoonPet } from "@/components/MoonPet";
 import { CHARACTER, CHARACTER_EN, COMPANY, PRODUCT } from "@/lib/brand";
 import { computeChart, formatPillar } from "@/lib/bazi";
@@ -18,6 +19,7 @@ import type {
   BirthInput,
   FontMood,
   MoonTint,
+  ReplyMode,
   VoiceGender,
 } from "@/types";
 
@@ -83,8 +85,6 @@ export function DemoApp() {
     stopSpeak();
     clearState();
     const fresh = defaultState();
-    fresh.tint = "honey";
-    fresh.fontMood = "classic";
     setState(fresh);
     setBirthDraft(emptyBirth);
     setSettingsOpen(false);
@@ -107,9 +107,15 @@ export function DemoApp() {
     if (!state?.chart?.confirmed) return;
     const trimmed = prompt.trim();
     if (!trimmed) return;
+    const mode = state.replyMode;
     startTransition(() => {
-      const user = userMessage(trimmed);
-      const { message, memory } = answerQuestion(trimmed, state.chart!, state.memory);
+      const user = userMessage(trimmed, mode);
+      const { message, memory } = answerQuestion(
+        trimmed,
+        state.chart!,
+        state.memory,
+        mode,
+      );
       patch({
         messages: [...state.messages, user, message],
         memory,
@@ -429,7 +435,7 @@ export function DemoApp() {
             </div>
           )}
 
-          <header className="mb-5 flex items-end justify-between gap-3">
+          <header className="mb-4 flex items-end justify-between gap-3">
             <div>
               <p className="mono-label">{COMPANY}</p>
               <h2 className="display-font mt-1 text-2xl tracking-tight">
@@ -445,6 +451,29 @@ export function DemoApp() {
               设置
             </button>
           </header>
+
+          <div className="mb-3 grid grid-cols-2 gap-1 rounded-[var(--radius)] border border-[var(--line)] bg-[var(--bg-elevated)] p-1">
+            {(
+              [
+                ["chat", "聊天模式", "短预测 · 快"],
+                ["analysis", "分析模式", "排盘图 · 详解"],
+              ] as [ReplyMode, string, string][]
+            ).map(([value, label, hint]) => (
+              <button
+                key={value}
+                type="button"
+                className={`rounded-[var(--radius-sm)] px-3 py-2.5 text-left transition ${
+                  state.replyMode === value
+                    ? "bg-[var(--accent-dim)] text-[var(--fg)]"
+                    : "text-[var(--fg-dim)] hover:text-[var(--fg-muted)]"
+                }`}
+                onClick={() => patch({ replyMode: value })}
+              >
+                <div className="text-sm font-medium tracking-tight">{label}</div>
+                <div className="mt-0.5 text-[10px] opacity-80">{hint}</div>
+              </button>
+            ))}
+          </div>
 
           <div className="mb-3 flex gap-2 overflow-x-auto pb-1">
             {SHORTCUTS.map((s) => (
@@ -480,13 +509,29 @@ export function DemoApp() {
                       </span>
                     </div>
                   ) : null}
+                  {m.role === "moon" && m.mode ? (
+                    <div className="mb-2">
+                      <span className="chip !px-2 !py-0.5 !text-[10px]">
+                        {m.mode === "analysis" ? "分析模式" : "聊天模式"}
+                      </span>
+                    </div>
+                  ) : null}
                   <p className="whitespace-pre-wrap">{m.text}</p>
+                  {m.role === "moon" && m.showTools && state.chart ? (
+                    <BaziTools chart={state.chart} />
+                  ) : null}
                   {m.role === "moon" ? (
                     <button
                       type="button"
                       className="mt-2 text-xs font-medium text-[var(--accent)]"
                       onClick={() =>
-                        play(m.text.replace(/【演示解读】[\s\S]*$/, "").trim())
+                        play(
+                          m.text
+                            .replace(/【演示解读】[\s\S]*$/g, "")
+                            .replace(/【演示】[\s\S]*$/g, "")
+                            .replace(/【分析模式】/g, "")
+                            .trim(),
+                        )
                       }
                     >
                       {speaking ? "朗读中…" : "播放"}
@@ -507,7 +552,11 @@ export function DemoApp() {
           >
             <input
               className="input flex-1"
-              placeholder="问事业、心事，或今日宜忌…"
+              placeholder={
+                state.replyMode === "analysis"
+                  ? "分析模式：展开天干地支与五行…"
+                  : "聊天模式：直接要预测…"
+              }
               value={input}
               onChange={(e) => setInput(e.target.value)}
             />
@@ -558,6 +607,28 @@ export function DemoApp() {
               </button>
             </div>
             <div className="mt-5 space-y-5 text-sm">
+              <div>
+                <p className="mono-label mb-2">Reply mode</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {(
+                    [
+                      ["chat", "聊天"],
+                      ["analysis", "分析"],
+                    ] as [ReplyMode, string][]
+                  ).map(([value, label]) => (
+                    <button
+                      key={value}
+                      type="button"
+                      className={`rounded-[var(--radius-sm)] py-2 ${
+                        state.replyMode === value ? "btn-primary" : "btn-ghost"
+                      }`}
+                      onClick={() => patch({ replyMode: value })}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <div>
                 <p className="mono-label mb-2">Voice · {CHARACTER}</p>
                 <div className="grid grid-cols-2 gap-2">

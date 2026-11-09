@@ -1,12 +1,13 @@
 import type { AppState } from "@/types";
 
-const KEY = "lunora-demo1-state-v2";
+const KEY = "lunora-demo1-state-v3";
 
 export const defaultState = (): AppState => ({
   step: "landing",
   voice: "female",
   tint: "honey",
   fontMood: "classic",
+  replyMode: "chat",
   birth: null,
   chart: null,
   memory: { career: "", cares: "", identity: "" },
